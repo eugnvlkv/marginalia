@@ -1,0 +1,33 @@
+Книги для marginalia
+
+Формат: EPUB или текстовый PDF. Проверка: открой PDF и выдели текст мышкой.
+Не выделяется — это скан, без OCR не прочитаем. Английские оригиналы лучше переводов.
+Начни с 3–4 книг.
+
+Основа, технический анализ:
+ 1. John J. Murphy, Technical Analysis of the Financial Markets. Это оригинал твоей немецкой книги. Немецкое издание тоже подойдёт: модель мультиязычная.
+ 2. The Ultimate Day Trading Playbook, Reid Thornton Publications. У тебя есть бумажная.
+ 3. Steve Nison, Japanese Candlestick Charting Techniques.
+ 4. Al Brooks, Trading Price Action Trends. Чтение графика по барам, это интрадей, основная стратегия твоего агента.
+
+Объём, ордерфлоу, ликвидность (у агента есть CVD, стакан, ликвидность):
+ 5. Anna Coulling, A Complete Guide to Volume Price Analysis.
+ 6. David H. Weis, Trades About to Happen (метод Вайкоффа).
+ 7. James Dalton, Mind Over Markets (Market Profile, объёмный профиль).
+ 8. Larry Harris, Trading and Exchanges: Market Microstructure for Practitioners.
+
+Риск и проверка гипотез (у агента есть сайзинг, RR и калибровка):
+ 9. Van K. Tharp, Trade Your Way to Financial Freedom (R-мультипликаторы, размер позиции).
+10. David Aronson, Evidence-Based Technical Analysis (как статистически проверять правила технического анализа).
+11. Mark Douglas, Trading in the Zone (психология).
+
+Общественное достояние (опубликованы до 1930). Их можно положить прямо в публичный репозиторий,
+это пригодится для демо и для CI в неделе 4. Ищи на gutenberg.org или archive.org:
+12. Richard Wyckoff (под псевдонимом Rollo Tape), Studies in Tape Reading, 1910. Чтение ленты сделок, предок ордерфлоу.
+13. Edwin Lefèvre, Reminiscences of a Stock Operator, 1923.
+14. Charles Mackay, Extraordinary Popular Delusions and the Madness of Crowds, 1841. Про пузыри и мании, для крипты в тему.
+
+Хороших книг про funding, перпетуалы и ликвидации почти нет.
+Для этой темы лучше потом добавить документацию OKX и Binance.
+
+Книги 1–11 защищены авторским правом: в публичный репозиторий их не кладём.
