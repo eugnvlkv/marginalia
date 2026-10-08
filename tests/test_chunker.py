@@ -135,6 +135,18 @@ def test_heading_title_is_trimmed():
     assert chunks[0].heading_path == ("Trendlines",)
 
 
+def test_long_section_is_split_into_chunks_with_the_same_path():
+    md = "# A\n\naaaa\n\nbbbb\n\ncccccc\n\ndd\n\n# B\n\ntext b\n"
+
+    chunks = chunk_markdown(md, "b", max_chars=12)
+
+    assert [(c.heading_path, c.text, c.position) for c in chunks] == [
+        (("A",), "aaaa\n\nbbbb", 0),
+        (("A",), "cccccc\n\ndd", 1),
+        (("B",), "text b", 2),
+    ]
+
+
 def test_no_text_gives_no_chunks():
     assert chunk_markdown("", "b") == []
     assert chunk_markdown("# A\n## B\n", "b") == []

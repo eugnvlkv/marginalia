@@ -1,29 +1,25 @@
 from marginalia.models import Chunk
 
-
-BOOK = """Preface text before any heading.
-
-# Chapter 4: Trends
-
-Intro to trends.
-
-## Trendlines
-
-A trendline connects lows.
-
-## Channels
-
-A channel is two parallel lines.
-
-# Chapter 5: Reversals
-
-## Head and Shoulders
-
-The most famous pattern.
-"""
+def split_text(text: str, max_char: int ) -> list[str]:
+    pieces  = []    # закрытые коробки
+    current = ""    # текущая коробка
+    for paragraph in text.split("\n\n"):
+        paragraph = paragraph.strip()
+        if not paragraph:
+            continue
+        if not current:                                         # коробка пустая
+            current = paragraph
+        elif len(current) + len(paragraph) + 2 <= max_char:
+            current+="\n\n" + paragraph      
+        else:
+            pieces.append(current)
+            current=paragraph
+    if current:
+        pieces.append(current)      
+    return pieces
 
 
-def chunk_markdown(markdown: str, book_id: str) -> list[Chunk]:
+def chunk_markdown(markdown: str, book_id: str, max_chars: int = 2000) -> list[Chunk]:
     chunks = []
     heading_path = ()
     lines = []
@@ -34,14 +30,14 @@ def chunk_markdown(markdown: str, book_id: str) -> list[Chunk]:
 
         if 1 <= level <= 6 and rest.startswith(" "):
             # 1) сохранить накопленный раздел — со СТАРЫМ путём
-            text = "\n".join(lines).strip()
-            if text:
+            for piece in split_text("\n".join(lines), max_chars):
+
                 position = len(chunks)
                 chunks.append(Chunk(
                     id=f"{book_id}:{position}",
                     book_id=book_id,
                     heading_path=heading_path,
-                    text=text,
+                    text=piece,
                     position=position,
                 ))
             # 2) начать новый раздел
@@ -51,22 +47,21 @@ def chunk_markdown(markdown: str, book_id: str) -> list[Chunk]:
             lines.append(line)
 
     # 3) после цикла: сохранить последний раздел
-    text = "\n".join(lines).strip()
-    if text:
+    for piece in split_text("\n".join(lines), max_chars):
         position = len(chunks)
         chunks.append(Chunk(
             id=f"{book_id}:{position}",
             book_id=book_id,
             heading_path=heading_path,
-            text=text,
+            text=piece,
             position=position,
         ))
 
     return chunks
 
-				
-				
-				
+        
+        
+        
 
 
 
@@ -74,4 +69,4 @@ def chunk_markdown(markdown: str, book_id: str) -> list[Chunk]:
 
 
 
-	
+  
