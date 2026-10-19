@@ -19,7 +19,7 @@ def split_text(text: str, max_char: int ) -> list[str]:
     return pieces
 
 
-def chunk_markdown(markdown: str, book_id: str, max_chars: int = 2000) -> list[Chunk]:
+def chunk_markdown(markdown: str, book_id: str, max_chars: int = 1500) -> list[Chunk]:
     chunks = []
     heading_path = ()
     lines = []
