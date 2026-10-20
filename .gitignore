@@ -6,3 +6,4 @@ data/
 scratch/
 .claude/
 KONSPEKT.md
+.env

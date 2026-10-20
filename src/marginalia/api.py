@@ -1,4 +1,4 @@
-"""HTTP API over the book index: GET /search for crypto-analyst.
+"""HTTP API over the book index for crypto-analyst: GET /search, GET /section.
 
 Run from the project root:
     HF_HUB_OFFLINE=1 uv run uvicorn marginalia.api:app --reload
@@ -9,11 +9,11 @@ from pathlib import Path
 from typing import Annotated
 
 import chromadb
-from fastapi import Depends, FastAPI, Query, Request
+from fastapi import Depends, FastAPI, HTTPException, Query, Request
 from pydantic import BaseModel
 
 from marginalia.embeddings import Embedder
-from marginalia.index import open_collection, search
+from marginalia.index import get_section, open_collection, search
 
 CHROMA_PATH = Path("data/chroma")
 
@@ -29,6 +29,13 @@ class SearchHit(BaseModel):
 class SearchResponse(BaseModel):
     query: str
     hits: list[SearchHit]
+
+
+class SectionResponse(BaseModel):
+    book_id: str
+    heading_path: list[str]
+    text: str
+    chunk_ids: list[str]
 
 
 @asynccontextmanager
@@ -81,4 +88,26 @@ def search_books(
             )
             for h in hits
         ],
+    )
+
+
+@app.get("/section")
+def read_section(
+    book: Annotated[str, Query(description="book_id from a search hit")],
+    collection: Annotated[chromadb.Collection, Depends(get_collection)],
+    path: Annotated[list[str] | None, Query(description="heading_path from a search hit, one ?path= per title")] = None,
+) -> SectionResponse:
+    heading_path = tuple(path or ())
+    found = get_section(collection, book, heading_path)
+    if found is None:
+        # Echo what arrived: a wrong path is much easier to spot this way.
+        raise HTTPException(
+            status_code=404,
+            detail=f"section not found: book={book!r}, path={list(heading_path)!r}",
+        )
+    return SectionResponse(
+        book_id=found.book_id,
+        heading_path=list(found.heading_path),
+        text=found.text,
+        chunk_ids=list(found.chunk_ids),
     )

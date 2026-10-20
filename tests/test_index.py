@@ -1,4 +1,4 @@
-from marginalia.index import ingest_book, search
+from marginalia.index import get_section, ingest_book, search
 
 # The fixtures embedder, collection and book_collection come from conftest.py.
 
@@ -38,3 +38,21 @@ def test_search_can_filter_by_book(collection, embedder):
     hits = search(collection, embedder, "trend", k=5, book_id="two")
 
     assert [h.book_id for h in hits] == ["two"]
+
+
+LONG_SECTION = "\n\n".join(f"part {i} " + " ".join(["trend"] * 120) for i in range(3))
+
+
+def test_get_section_glues_the_whole_section_back_in_order(collection, embedder):
+    # Three ~730-char paragraphs do not fit into one 1500-char chunk: the section becomes 2 chunks.
+    ingest_book(collection, "b", f"# Long\n\n{LONG_SECTION}\n\n# Other\n\nrisk here\n", embedder)
+
+    section = get_section(collection, "b", ("Long",))
+
+    assert section.chunk_ids == ("b:0", "b:1")
+    assert section.text == LONG_SECTION
+
+
+def test_get_section_returns_none_for_unknown_path(book_collection):
+    assert get_section(book_collection, "b", ("No such section",)) is None
+    assert get_section(book_collection, "other-book", ("Risk",)) is None

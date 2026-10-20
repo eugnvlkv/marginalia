@@ -91,6 +91,44 @@ def search(
     return hits
 
 
+@dataclass(frozen=True)
+class Section:
+    book_id: str
+    heading_path: tuple[str, ...]
+    text: str
+    chunk_ids: tuple[str, ...]
+
+
+def get_section(
+    collection: chromadb.Collection,
+    book_id: str,
+    heading_path: tuple[str, ...],
+) -> Section | None:
+    """The whole section back from its chunks: search finds a small piece, the agent reads all of it.
+
+    Only chunks with exactly this path; subsections are separate sections.
+    """
+    # No vectors here: a plain metadata filter. Two conditions need $and in Chroma.
+    result = collection.get(
+        where={"$and": [{"book_id": book_id}, {"heading_path": PATH_SEP.join(heading_path)}]},
+        include=["documents", "metadatas"],
+    )
+    if not result["ids"]:
+        return None
+
+    # Chroma does not promise any order. Tuples sort by their first element, so this is book order.
+    rows = sorted(
+        (meta["position"], chunk_id, text)
+        for chunk_id, text, meta in zip(result["ids"], result["documents"], result["metadatas"])
+    )
+    return Section(
+        book_id=book_id,
+        heading_path=heading_path,
+        text="\n\n".join(text for _, _, text in rows),
+        chunk_ids=tuple(chunk_id for _, chunk_id, _ in rows),
+    )
+
+
 if __name__ == "__main__":
     from marginalia.embeddings import E5Embedder
 
