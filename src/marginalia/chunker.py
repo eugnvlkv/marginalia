@@ -21,7 +21,11 @@ def split_text(text: str, max_char: int ) -> list[str]:
 
     return pieces
 
-
+# 1. идём по строкам;
+# 2. это заголовок? (1–6 # и пробел после);
+# 3. да → сохраняем lines (склеить → split_text → Chunk со старым путём), очищаем lines, обновляем путь ([:level-1] + название);
+# 4. нет → строку кладём в lines;
+# 5. после цикла → сохраняем то, что осталось.
 def chunk_markdown(markdown: str, book_id: str, max_chars: int = 1500) -> list[Chunk]:
     chunks = []
     heading_path = ()
