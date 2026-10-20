@@ -5,17 +5,20 @@ def split_text(text: str, max_char: int ) -> list[str]:
     current = ""    # текущая коробка
     for paragraph in text.split("\n\n"):
         paragraph = paragraph.strip()
-        if not paragraph:
+        if len(paragraph) == 0:
             continue
-        if not current:                                         # коробка пустая
-            current = paragraph
-        elif len(current) + len(paragraph) + 2 <= max_char:
-            current+="\n\n" + paragraph      
+        if len(current) == 0:
+            current=paragraph
+            continue
+        elif max_char >= len(current) + 2 + len(paragraph):
+            current += "\n\n" + paragraph
         else:
             pieces.append(current)
-            current=paragraph
-    if current:
-        pieces.append(current)      
+            current = ""
+            current = paragraph
+    if len(current) > 0:
+        pieces.append(current)
+
     return pieces
 
 
@@ -58,15 +61,3 @@ def chunk_markdown(markdown: str, book_id: str, max_chars: int = 1500) -> list[C
         ))
 
     return chunks
-
-        
-        
-        
-
-
-
-
-
-
-
-  
