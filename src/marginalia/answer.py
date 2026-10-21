@@ -17,9 +17,10 @@ MODEL = "claude-haiku-4-5"
 PRICE_PER_MTOK = {"input": 1.00, "output": 5.00}  # USD, Claude Haiku 4.5
 
 SYSTEM = """You answer questions about trading using ONLY the book excerpts in the user message.
+- Always write the answer in the language of the question, including when you say the books do not cover it.
+  Keep trading terms as they are in the book.
 - Every claim must come from the excerpts. Do not add outside knowledge.
 - If the excerpts do not answer the question, set not_in_books to true and say so in one sentence.
-- Answer in the language of the question. Keep trading terms as they are in the book.
 - In sources, list the id in square brackets of every excerpt you used, for example murphy-ta:318."""
 
 
