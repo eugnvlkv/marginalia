@@ -61,6 +61,11 @@ def ingest_book(collection: chromadb.Collection, book_id: str, markdown: str, em
     return len(chunks)
 
 
+def parse_path(stored: str) -> tuple[str, ...]:
+    """The heading path is stored as one " › "-joined string; this turns it back into a tuple."""
+    return tuple(stored.split(PATH_SEP)) if stored else ()
+
+
 def search(
     collection: chromadb.Collection,
     embedder: Embedder,
@@ -78,17 +83,27 @@ def search(
     for chunk_id, text, meta, distance in zip(
         result["ids"][0], result["documents"][0], result["metadatas"][0], result["distances"][0]
     ):
-        path = meta["heading_path"]
         hits.append(
             Hit(
                 chunk_id=chunk_id,
                 book_id=meta["book_id"],
-                heading_path=tuple(path.split(PATH_SEP)) if path else (),
+                heading_path=parse_path(meta["heading_path"]),
                 text=text,
                 score=1 - distance,  # Chroma returns cosine distance = 1 - similarity
             )
         )
     return hits
+
+
+def chunk_paths(collection: chromadb.Collection, chunk_ids: list[str]) -> dict[str, tuple[str, tuple[str, ...]]]:
+    """chunk id → (book_id, heading_path) for the ids that exist; unknown ids are simply absent."""
+    if not chunk_ids:
+        return {}
+    result = collection.get(ids=list(chunk_ids), include=["metadatas"])
+    return {
+        chunk_id: (meta["book_id"], parse_path(meta["heading_path"]))
+        for chunk_id, meta in zip(result["ids"], result["metadatas"])
+    }
 
 
 @dataclass(frozen=True)

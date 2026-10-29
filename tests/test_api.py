@@ -1,7 +1,10 @@
 import pytest
+from fakes import ScriptedClient, final, response, tool_use
 from fastapi.testclient import TestClient
 
-from marginalia.api import app, get_collection, get_embedder
+from marginalia.agent import build_agent
+from marginalia.answer import Answer
+from marginalia.api import app, get_agent, get_collection, get_embedder
 
 
 @pytest.fixture
@@ -64,3 +67,53 @@ def test_section_without_path_is_the_preface(client):
 
 def test_unknown_section_is_404(client):
     assert client.get("/section", params={"book": "b", "path": ["Nope"]}).status_code == 404
+
+
+def use_agent(book_collection, embedder, responses):
+    """Make /ask run the real agent graph, but with a scripted fake Claude."""
+    app.dependency_overrides[get_agent] = lambda: build_agent(ScriptedClient(responses), book_collection, embedder)
+
+
+def test_ask_returns_answer_with_sources_trace_and_cost(client, book_collection, embedder):
+    answer = Answer(answer="Не больше 2%.", sources=["b:2", "made:up"], not_in_books=False)
+    use_agent(book_collection, embedder, [response([tool_use("t1", "search_docs", {"query": "risk"})], "tool_use"), final(answer)])
+
+    response_ = client.post("/ask", json={"question": "сколько рисковать?"})
+
+    assert response_.status_code == 200
+    assert response_.json() == {
+        "question": "сколько рисковать?",
+        "answer": "Не больше 2%.",
+        "not_in_books": False,
+        "sources": [{"chunk_id": "b:2", "book_id": "b", "heading_path": ["Risk"]}],  # made:up is dropped
+        "tool_calls": [{"name": "search_docs", "input": {"query": "risk"}}],
+        "model_calls": 2,
+        "cost_usd": 0.0003,  # 2 calls x (100 in x $1 + 10 out x $5) / 1M
+    }
+
+
+def test_ask_validates_the_question(client, book_collection, embedder):
+    # Dependencies are resolved too, so give /ask an agent; it is never called because validation fails first.
+    use_agent(book_collection, embedder, [])
+
+    assert client.post("/ask", json={"question": ""}).status_code == 422
+    assert client.post("/ask", json={}).status_code == 422
+
+
+def test_ask_reports_an_agent_that_never_answers_as_502(client, book_collection, embedder):
+    endless = [response([tool_use(f"t{i}", "search_docs", {"query": "risk"})], "tool_use") for i in range(10)]
+    use_agent(book_collection, embedder, endless)
+
+    response_ = client.post("/ask", json={"question": "q"})
+
+    assert response_.status_code == 502
+    assert "did not answer" in response_.json()["detail"]
+
+
+def test_ask_without_claude_is_503(client):
+    # No agent in app.state: what lifespan leaves when ANTHROPIC_API_KEY is missing.
+    response_ = client.post("/ask", json={"question": "q"})
+
+    assert response_.status_code == 503
+    assert "--env-file .env" in response_.json()["detail"]
+
