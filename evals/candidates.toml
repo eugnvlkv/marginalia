@@ -1,0 +1,18 @@
+# Labels for the golden set: drafted by an LLM from the book text, then checked by an independent
+# reviewer (an LLM told only that it reviews an answer key for a quiz on Murphy's book; it saw the full
+# section texts, not the drafter's notes). `# review` lines record its verdict; `reviewed = true` marks checked blocks.
+#
+# q01–q58 were collected blind from crypto-analyst (~/Desktop/ta-questions.md);
+# q59–q67 were written by the assistant after common questions on trader forums (BabyPips, Elite Trader, Quora),
+# before looking into the book. All
+# labels were drafted by an LLM from the book text. For each question:
+#   - read the `# evidence:` quotes and, if in doubt, the section itself (/section in /docs);
+#   - fix kind / relevant / expected, or drop the question;
+#   - move the approved ones into evals/golden.toml (~40 in total).
+# `# note:` lines are the drafter's doubts and alternatives.
+#
+# Check this file:  uv run python -m marginalia.golden check evals/candidates.toml
+
+# Draft golden labels, part 1 (n = 1..15). Book: Murphy, "Technical Analysis of the Financial Markets".
+# Every label is a draft for human verification; evidence quotes are verbatim (markdown *italics* markers dropped).
+

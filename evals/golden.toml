@@ -1,0 +1,1608 @@
+# Golden set: questions with known right answers. Everything in week 3 is measured on it.
+#
+# Fields of one question:
+#   id        unique short name, latin, with dashes
+#   kind      "factual"       — the answer is in one place
+#             "multi"         — the answer is assembled from several sections (at least 2 in `relevant`)
+#             "partial"       — part of the question is in the books, part is not
+#                               (e.g. "why 0.618 retracement, and does it work in crypto?").
+#                               A correct answer gives the book part and honestly says the rest is not in the books.
+#             "unanswerable"  — the books do not answer it; `relevant` stays empty
+#   question  as a crypto-analyst user would ask it (any language)
+#   relevant  sections that answer it: { book = "...", path = "Chapter › Section" }.
+#             A section also covers its subsections.
+#             Find exact paths with:  uv run python -m marginalia.golden sections <word>
+#   expected  key points a correct answer must contain (the LLM judge compares against them).
+#             For "partial": the book part AND which part must be refused.
+#             For "unanswerable": what a correct refusal looks like.
+#
+# Check the file:  uv run python -m marginalia.golden check
+# Goal for the week: ~40 questions across all four kinds.
+
+[[questions]]
+id = "rsi-overbought"
+kind = "factual"
+question = "что означает RSI выше 70?"
+relevant = [
+    { book = "murphy-ta", path = "10 Oscillators and Contrary Opinion › THE RELATIVE STRENGTH INDEX (RSI)" },
+]
+expected = """
+Перекупленность (overbought): предупреждение о возможном развороте, а не сигнал сам по себе.
+Сильнее сигналы — дивергенция RSI с ценой и failure swing выше 70.
+В сильном восходящем тренде RSI может долго оставаться выше 70.
+В бычьем рынке уровень перекупленности часто сдвигают к 80.
+"""
+
+[[questions]]
+id = "hs-volume"
+kind = "multi"
+question = "какую роль играет объём в фигуре голова и плечи?"
+relevant = [
+    { book = "murphy-ta", path = "5 Major Reversal Patterns › THE HEAD AND SHOULDERS REVERSAL PATTERN" },
+    { book = "murphy-ta", path = "5 Major Reversal Patterns › THE IMPORTANCE OF VOLUME" },
+]
+expected = """
+Объём подтверждает фигуру: на голове он обычно ниже, чем на левом плече.
+Главный сигнал — заметно меньший объём на правом плече.
+Объём растёт при пробое линии шеи, падает на возвратном движении и снова растёт после него.
+На вершинах объём менее критичен, чем на основаниях.
+"""
+
+[[questions]]
+id = "binance-funding-now"
+kind = "unanswerable"
+question = "какой сейчас funding rate на Binance?"
+relevant = []
+expected = """
+Честный отказ на русском: в книгах нет текущих рыночных данных. Без выдуманных цифр.
+"""
+
+# --- your questions below. Copy a block above and change it. ---
+
+[[questions]]
+id = "q01-distribution-phase"
+kind = "partial"
+question = "в пруфе пишет «фаза distribution» — это распределение по Вайкоффу? что это за фаза и как её узнать на графике?"
+relevant = [
+    { book = "murphy-ta", path = "2 Dow Theory › BASIC TENETS › 3. Major Trends Have Three Phases." },
+    { book = "murphy-ta", path = "5 Major Reversal Patterns › THE HEAD AND SHOULDERS REVERSAL PATTERN" },
+]
+expected = """
+Из книги: «distribution» у Мэрфи — третья фаза основного тренда по теории Доу: накопление → участие публики → распределение.
+Из книги: в фазе распределения информированные инвесторы, покупавшие у дна, начинают продавать («распределять»), пока газеты пишут всё более бычьи истории, экономические новости лучше некуда, а спекулятивный объём и участие публики растут.
+Из книги: на графике восходящий тренд теряет импульс и переходит в горизонтальный торговый диапазон (спрос и предложение в равновесии); распределение завершено, когда поддержка по нижней границе диапазона пробита и начинается нисходящий тренд с понижающимися пиками и впадинами (так формируются вершинные фигуры, напр. голова и плечи).
+Нет в книгах (честно сказать): методика Вайкоффа (его фазы и схемы распределения) в книге не описана, сравнить с ней по книге нельзя.
+"""
+reviewed = true
+# evidence: 2 Dow Theory › BASIC TENETS › 3. Major Trends Have Three Phases. — "The distribution phase takes place when newspapers begin to print increasingly bullish stories; when economic news is better than ever; and when speculative volume and public participation increase."
+# evidence: 5 Major Reversal Patterns › THE HEAD AND SHOULDERS REVERSAL PATTERN — "Once this distribution phase has been completed, support levels along the bottom of the horizontal trading range are broken and a new downtrend has been established."
+# source: shared/proofMetadata.ts:68 — список фаз рынка (accumulation/markup/distribution/markdown) для чипа «фаза …» в пруфе
+# theme: тренд и фазы
+# note: the word "Wyckoff" does not occur in the book; nor do "markup"/"markdown" phases. The H&S section is relevant only for its intro paragraph (distribution = sideways range after an uptrend). Possible extra: "11 Point and Figure Charting › PRICE PATTERNS" mentions a fulcrum as "a distribution top" (congestion after a significant advance) — left out as minor.
+# review (independent trader review, 2026-10-31): ok, confidence high — Тезисы точно передают фазу распределения по Доу и описание из главы о голове и плечах (рост теряет импульс, горизонтальный диапазон, пробой поддержки). Вайкофф в книге упомянут только как автор работ по крестиково-ноликовым графикам, его методики нет, поэтому тип partial верен.
+
+[[questions]]
+id = "q02-adx-vs-atr"
+kind = "multi"
+question = "Вечно путаю ADX и ATR, оба вроде про «силу движения». Если ADX ниже 20, а ATR при этом большой, это тренд или нет?"
+relevant = [
+    { book = "murphy-ta", path = "15 Computers and Trading Systems › WELLES WILDER’S PARABOLIC AND DIRECTIONAL MOVEMENT SYSTEMS › DMI and ADX" },
+    { book = "murphy-ta", path = "A Advanced Technical Indicators › STARC BANDS AND KELTNER CHANNELS" },
+]
+expected = """
+ADX (Уайлдер, часть системы DMI) оценивает степень направленного движения по шкале 0–100: растущий ADX — рынок в тренде, падающий — бестрендовая среда; само направление показывают линии +DI и −DI.
+Разворот ADX вверх и подъём выше 20 часто означает начало нового тренда; разворот вниз от уровня выше 40 — ранний признак ослабления тренда и начала торгового диапазона.
+ATR (Average True Range) — среднее значение «истинного диапазона» баров за x периодов, т.е. размах движения цены, а не его направленность; на ATR строятся полосы STARC и каналы Кельтнера.
+Книга эту комбинацию прямо не разбирает; из определений: ADX ниже 20 — тренда нет, даже если бары широкие (большой ATR); для бестрендового рынка книга советует осцилляторы, а не трендовые системы.
+"""
+reviewed = true
+# evidence: 15 Computers and Trading Systems › WELLES WILDER’S PARABOLIC AND DIRECTIONAL MOVEMENT SYSTEMS › DMI and ADX — "Wilder’s ADX line rates the directional movement of the various markets on a scale of 0 to 100. A rising ADX line means the market is trending"
+# evidence: A Advanced Technical Indicators › STARC BANDS AND KELTNER CHANNELS — "Average True Range is the average of true price ranges over x periods."
+# source: frontend/src/locales/ru.ts:692 — подсказка ADX: сила тренда, а не направление (ta.metric.adx.tip)
+# theme: тренд и фазы
+# note: ADX 20-level quote from the same section: "A rise back above the 20 level is often a sign of the start of a new trend." The book never says explicitly "ATR measures volatility" (Keltner: close above band "indicates a breakout in upward volatility"); the ADX<20 + big ATR verdict is a synthesis, not a quote. Could be argued as partial if the reviewer wants the combination to be "not in the book".
+# review (independent trader review, 2026-10-31): ok, confidence medium — Определения ADX/DI и ATR совпадают с текстом гл. 15 и прил. A; вывод «ниже 20 — бестрендовая среда» опирается на рис. 15.5, 15.7 и 15.8 (разворот вверх от уровня ниже 20 = конец торгового диапазона). Ответ собран из двух разделов, поэтому тип multi верен.
+
+[[questions]]
+id = "q03-volatile-range"
+kind = "partial"
+question = "card says regime is volatile_range — how is that different from a normal range or a weak trend? should I fade the edges there or wait for a breakout?"
+relevant = [
+    { book = "murphy-ta", path = "4 Basic Concepts of Trend › TREND HAS THREE DIRECTIONS" },
+    { book = "murphy-ta", path = "6 Continuation Patterns › THE RECTANGLE FORMATION › Swings Within the Range Can Be Traded" },
+    { book = "murphy-ta", path = "15 Computers and Trading Systems › WELLES WILDER’S PARABOLIC AND DIRECTIONAL MOVEMENT SYSTEMS › DMI and ADX" },
+]
+expected = """
+Из книги: рынок движется вверх, вниз или вбок; боковой «торговый диапазон» (не меньше трети времени) — равновесие спроса и предложения, трендовые системы там работают плохо, и часто разумнее стоять вне рынка.
+Из книги: отличить тренд от бестрендового рынка помогает ADX: растущий — тренд (трендовые методы), падающий — бестрендовая среда (осцилляторы).
+Из книги: в диапазоне (прямоугольнике) одни торгуют от границ — покупают у низа и продают у верха с небольшим чётко заданным риском, а при пробое сразу выходят и разворачивают позицию; другие избегают таких рынков и ждут явного пробоя.
+Нет в книгах (честно сказать): что именно означает режим volatile_range в карточке и как приложение отличает его от range/weak_trend — это логика продукта; отдельного режима «волатильный диапазон» в книге нет.
+"""
+reviewed = true
+# evidence: 4 Basic Concepts of Trend › TREND HAS THREE DIRECTIONS — "However, when the market is moving sideways, the third choice—to stay out of the market—is usually the wisest."
+# evidence: 6 Continuation Patterns › THE RECTANGLE FORMATION › Swings Within the Range Can Be Traded — "Some chartists trade the swings within such a pattern by buying dips near the bottom and selling rallies near the top of the range."
+# evidence: 15 Computers and Trading Systems › WELLES WILDER’S PARABOLIC AND DIRECTIONAL MOVEMENT SYSTEMS › DMI and ADX — "Nontrending systems (oscillators, for example) could be utilized on markets with low directional movement."
+# source: shared/proofMetadata.ts:66 — список рыночных режимов (strong_trend/weak_trend/range/volatile_range) для чипа режима
+# theme: рыночные режимы
+# note: possible extras: "10 Oscillators and Contrary Opinion › WHEN OSCILLATORS ARE MOST USEFUL" (oscillators track sideways markets, ignore them right after a breakout) and "16 Money Management and Trading Tactics › TRADING TACTICS › Tactics on Breakouts: Anticipation or Reaction?". The book has no notion of "weak trend" as a separate regime.
+# review (independent trader review, 2026-10-31): ok, confidence medium — Всё взято из книги: три направления рынка, «стоять вне рынка — обычно мудрее», ADX как фильтр, торговля от границ и ожидание пробоя в прямоугольнике. Режима «volatile_range» в книге действительно нет.
+
+[[questions]]
+id = "q04-level-touches"
+kind = "partial"
+question = "в пруфе написано «удержан как поддержка — отскок вверх». сколько раз уровень должен отбить цену, чтобы считаться сильным, и правда что с каждым касанием он слабеет?"
+relevant = [
+    { book = "murphy-ta", path = "4 Basic Concepts of Trend › SUPPORT AND RESISTANCE › The Psychology of Support and Resistance" },
+    { book = "murphy-ta", path = "4 Basic Concepts of Trend › TRENDLINES › Tentative Versus the Valid Trendline" },
+    { book = "murphy-ta", path = "4 Basic Concepts of Trend › TRENDLINES › How to Determine the Significance of a Trendline" },
+]
+expected = """
+Из книги: для горизонтальной поддержки/сопротивления числа касаний книга не задаёт; значимость зоны определяется объёмом торговли в ней: сколько времени цена там провела, какой был объём и насколько недавно это было (и насколько далеко цена затем ушла).
+Из книги: для трендовой линии — две точки нужны, чтобы её провести, третье касание с отскоком делает её действительной; чем дольше линия держится и чем больше раз протестирована, тем она значимее (8 тестов важнее 3) и тем важнее её пробой.
+Нет в книгах (честно сказать): утверждения «уровень слабеет с каждым касанием» в книге нет (для трендовых линий она говорит обратное — больше тестов, значимее); «магического» числа отскоков для горизонтального уровня нет.
+"""
+reviewed = true
+# evidence: 4 Basic Concepts of Trend › SUPPORT AND RESISTANCE › The Psychology of Support and Resistance — "support or resistance area can be determined in three ways: the amount of time spent there, volume, and how recently the trading took place."
+# evidence: 4 Basic Concepts of Trend › TRENDLINES › Tentative Versus the Valid Trendline — "two points are needed to draw the trendline, and a third point to make it a valid trendline."
+# evidence: 4 Basic Concepts of Trend › TRENDLINES › How to Determine the Significance of a Trendline — "what determines the significance of a trendline? The answer to that question is twofold—the longer it has been intact and the number of times it has been tested."
+# source: shared/proofHumanize.ts:103 — фраза реакции «отскок» с удержанием уровня как поддержки
+# theme: поддержка и сопротивление
+# note: partial vs multi is debatable: the book answers the first part only indirectly (criteria, not a count) and says nothing about levels weakening per touch. The touch-count rules are for trendlines, not horizontal levels — the answer must not transfer them silently.
+# review (independent trader review, 2026-10-31): ok, confidence high — Значимость горизонтального уровня (время, объём, свежесть) и правило трёх касаний и «больше тестов — значимее» для трендовой линии переданы верно. Поиск по книге не нашёл утверждения «уровень слабеет с каждым касанием», так что часть «нет в книге» честная.
+
+[[questions]]
+id = "q05-role-reversal"
+kind = "factual"
+question = "В карточке вход «Ретест»: мол, пробитый уровень теперь перевёрнут. Почему старое сопротивление после пробоя вдруг начинает работать как поддержка?"
+relevant = [
+    { book = "murphy-ta", path = "4 Basic Concepts of Trend › SUPPORT AND RESISTANCE › How Support and Resistance Levels Reverse Their Roles" },
+    { book = "murphy-ta", path = "4 Basic Concepts of Trend › SUPPORT AND RESISTANCE › The Psychology of Support and Resistance" },
+    { book = "murphy-ta", path = "4 Basic Concepts of Trend › SUPPORT AND RESISTANCE › Support Becoming Resistance and Vice Versa: Degree of Penetration" },
+]
+expected = """
+Когда уровень поддержки или сопротивления пробит на значительную величину, они меняются ролями: сопротивление становится поддержкой, поддержка — сопротивлением.
+Причина — психология участников (лонги, шорты, вне рынка): у каждой группы есть «интерес» к зоне, где шла торговля; после пробоя ошибившиеся хотят выйти или войти на возврате к ней, и прежние продажи у сопротивления превращаются в покупки под рынком (а прежние покупки у поддержки — в продажи над рынком).
+Чем значимее была зона (дольше там торговали, больше объём, свежее), тем сильнее она действует в новой роли.
+Роли меняются только после значительного пробоя — когда рынок ушёл достаточно далеко, чтобы участники убедились в ошибке; ориентир около 3% для крупных уровней и около 1% для краткосрочных, но это субъективно.
+"""
+reviewed = true
+# evidence: 4 Basic Concepts of Trend › SUPPORT AND RESISTANCE › How Support and Resistance Levels Reverse Their Roles — "Whenever a support or resistance level is penetrated by a significant amount, they reverse their roles and become the opposite."
+# evidence: 4 Basic Concepts of Trend › SUPPORT AND RESISTANCE › The Psychology of Support and Resistance — "Now, however, all of the previous buy orders under the market have become sell orders over the market. Support has become resistance."
+# evidence: 4 Basic Concepts of Trend › SUPPORT AND RESISTANCE › Support Becoming Resistance and Vice Versa: Degree of Penetration — "All of the previous selling near the top of wave 1 (creating the resistance level) has now become buying under the market."
+# source: frontend/src/locales/ru.ts:1126 — подсказка триггера «Ретест после пробоя» (смена ролей поддержки/сопротивления)
+# theme: поддержка и сопротивление
+# note: factual — all three are subsections of one section ("4 Basic Concepts of Trend › SUPPORT AND RESISTANCE"); listed separately to avoid counting the round-numbers subsection. The reviewer may collapse them into the parent path. Related but not needed: "TRENDLINES › How Trendlines Reverse Roles", H&S "The Return Move".
+# review (independent trader review, 2026-10-31): ok, confidence high — Все три подраздела относятся к одному разделу SUPPORT AND RESISTANCE, поэтому тип factual верен. Психология участников, значимость зоны и критерий 3%/1% переданы точно.
+
+[[questions]]
+id = "q06-fib-0618-crypto"
+kind = "partial"
+question = "Example says SOL is basing above the 0.618 retracement. Why 0.618 and not 0.5? does this fib level really work in crypto or its just self-fulfilling?"
+relevant = [
+    { book = "murphy-ta", path = "4 Basic Concepts of Trend › PERCENTAGE RETRACEMENTS" },
+    { book = "murphy-ta", path = "13 Elliott Wave Theory › FIBONACCI NUMBERS AS THE BASIS OF THE WAVE PRINCIPLE" },
+    { book = "murphy-ta", path = "13 Elliott Wave Theory › FIBONACCI RATIOS AND RETRACEMENTS › Fibonacci Percentage Retracements" },
+    { book = "murphy-ta", path = "1 Philosophy of Technical Analysis › SOME CRITICISMS OF THE TECHNICAL APPROACH › The Self-Fulfilling Prophecy" },
+]
+expected = """
+Из книги: 50% — самая известная коррекция (из теории Доу), с минимумом около 1/3 и максимумом около 2/3; последователи Эллиотта/Фибоначчи используют 38% и 62%; Мэрфи объединяет их в зоны 33–38% и 62–66%; 0.5 и 0.618 не противопоставляются.
+Из книги: 0.618 — предел отношения числа Фибоначчи к следующему (после первых четырёх чисел); 50% (1/2) и 2/3 — тоже отношения Фибоначчи. В сильном тренде минимальная коррекция обычно около 38%, в более слабом максимальная — около 62%; уход дальше 2/3 повышает шансы разворота.
+Из книги: про самосбывающееся пророчество — проблема меньше, чем кажется: чтение графиков субъективно, трейдеры входят по-разному и не одновременно, эффект был бы «самокорректирующимся», а крупные движения определяются спросом и предложением.
+Нет в книгах (честно сказать): работает ли 0.618 именно на криптовалютах (SOL и т.п.) — о крипте в книге ничего нет, такой статистики она не даёт.
+"""
+reviewed = true
+# evidence: 4 Basic Concepts of Trend › PERCENTAGE RETRACEMENTS — "followers of that approach use percentage retracements of 38% and 62%. I prefer to combine both approaches for a minimum retracement zone of 33-38% and a maximum zone of 62-66%."
+# evidence: 13 Elliott Wave Theory › FIBONACCI NUMBERS AS THE BASIS OF THE WAVE PRINCIPLE — "The ratio of any number to its next higher number approaches .618, after the first four numbers."
+# evidence: 13 Elliott Wave Theory › FIBONACCI RATIOS AND RETRACEMENTS › Fibonacci Percentage Retracements — "In a strong trend, a minimum retracement is usually around 38%. In a weaker trend, the maximum percentage retracement is usually 62%."
+# evidence: 1 Philosophy of Technical Analysis › SOME CRITICISMS OF THE TECHNICAL APPROACH › The Self-Fulfilling Prophecy — "Even if the self-fulfilling prophecy were of major concern, it would probably be “self-correcting” in nature."
+# source: landing/i18n/dictionaries.ts:321 — пример в ленте агента (SOL): удержание над 0.618 коррекции
+# theme: поддержка и сопротивление
+# note: possible extra: "16 Money Management and Trading Tactics › TRADING TACTICS › Using Percentage Retracements" (40-60% pullback zone for entries). "1 Philosophy of Technical Analysis › UNIVERSAL PRINCIPLES" could be cited for "principles apply to any market", but it does not mention crypto.
+# review (independent trader review, 2026-10-31): ok, confidence high — Зоны 33–38% и 62–66%, происхождение 0.618, 1/2 и 2/3 как отношений Фибоначчи, правило «дальше 2/3 — скорее разворот» и разбор самосбывающегося пророчества взяты из показанных разделов. Про крипту книга ничего не говорит.
+
+[[questions]]
+id = "q07-btc-next-support"
+kind = "partial"
+question = "почём сейчас BTC и где ближайшая структурная поддержка под текущей ценой? а если её пробьют — до какого следующего уровня обычно идёт цена?"
+relevant = [
+    { book = "murphy-ta", path = "4 Basic Concepts of Trend › SUPPORT AND RESISTANCE" },
+    { book = "murphy-ta", path = "5 Major Reversal Patterns › FINDING A PRICE OBJECTIVE" },
+]
+expected = """
+Из книги: поддержка — уровень/зона под рынком, где покупки пересиливают продажи и снижение останавливается; обычно её заранее определяют по предыдущему минимуму реакции (reaction low).
+Из книги: если поддержка пробита на значительную величину (ориентир около 3% для крупных уровней, около 1% для краткосрочных), вероятен разворот тренда вниз, а пробитая поддержка дальше работает как сопротивление на отскоках.
+Из книги: куда идёт цена после пробоя — минимальная цель равна высоте фигуры, отложенной от точки пробоя; её подгоняют к заметным минимумам реакции прошлого подъёма (медвежьи движения часто там останавливаются), к уровням коррекции 50% и 66%, гэпам и долгосрочным трендовым линиям; максимальная цель — 100% коррекция всего предыдущего движения; круглые числа тоже служат психологической поддержкой.
+Нет в книгах (честно сказать): текущая цена BTC, где сейчас ближайшая поддержка и следующий уровень — рыночных данных в книгах нет; без выдуманных цифр.
+"""
+reviewed = true
+# evidence: 4 Basic Concepts of Trend › SUPPORT AND RESISTANCE — "Usually a support level is identified beforehand by a previous reaction low."
+# source: frontend/src/locales/ru.ts:1944 — подсказка «ближайшая поддержка» в анализе: ближайший pivot low ниже текущей цены
+# theme: поддержка и сопротивление
+# note: parent section chosen because the key lines are in its own intro ("If the support level is violated, then a trend reversal from up to down is likely."; "In a downtrend, support levels are not sufficient to stop the decline permanently") plus the role-reversal / degree-of-penetration / round-number subsections. The "next level" part is weakly covered — the book gives pattern-based minimum objectives, not a "next support" rule.
+# review (independent trader review, 2026-10-31): fix, confidence high — Тезис «правила, куда обычно идёт цена, книга не даёт» неверен. В разделе FINDING A PRICE OBJECTIVE (подраздел Adjusting Price Objectives) есть и минимальная цель по высоте фигуры, и подгонка к минимумам реакции, к коррекциям 50%/66%, гэпам и трендовым линиям, и максимум в 100%. Раздел нужно добавить, тезис переписать.
+# review added: 5 Major Reversal Patterns › FINDING A PRICE OBJECTIVE
+
+[[questions]]
+id = "q08-fakeout-vs-sweep"
+kind = "partial"
+question = "в карточке «прокол уровня, закрытие вернулось» — это ложный пробой или свип ликвидности (стоп-хант)? чем они вообще отличаются?"
+relevant = [
+    { book = "murphy-ta", path = "4 Basic Concepts of Trend › TRENDLINES › How to Handle Small Trendline Penetrations" },
+    { book = "murphy-ta", path = "4 Basic Concepts of Trend › TRENDLINES › What Constitutes a Valid Breaking of a Trendline?" },
+    { book = "murphy-ta", path = "5 Major Reversal Patterns › VARIATIONS FROM THE IDEAL PATTERN" },
+    { book = "murphy-ta", path = "4 Basic Concepts of Trend › REVERSAL DAYS" },
+]
+expected = """
+Из книги: «цена проколола уровень внутри дня, но закрылась обратно» — внутридневное нарушение; закрытие за уровнем значимее простого прокола, и такое мелкое нарушение часто лучше игнорировать, если дальнейшее движение подтверждает уровень.
+Из книги: ложный пробой («бычья ловушка») — цена выходит за прежний пик и затем проваливается, часто в конце крупного восходящего тренда; тревожный признак — пробой на слабом объёме и падение на сильном; фильтры (закрытие за уровнем, 1–3%, правило двух дней, закрытие пятницы) уменьшают число ложных сигналов, но не безошибочны.
+Из книги: бар, который ставит новый максимум (минимум) движения и закрывается ниже (выше) предыдущего закрытия, — разворотный день; чем шире диапазон и больше объём, тем сильнее сигнал; нижний разворотный день на очень большом объёме — «кульминация продаж»: последних разочарованных лонгов вынуждают выйти, давление продаж исчезает, и цена быстро отскакивает.
+Нет в книгах (честно сказать): понятий «свип ликвидности» и «стоп-хант» и их отличия от ложного пробоя в книге нет.
+"""
+reviewed = true
+# evidence: 4 Basic Concepts of Trend › TRENDLINES › How to Handle Small Trendline Penetrations — "Sometimes prices will violate a trendline on an intraday basis, but then close in the direction of the original trend"
+# evidence: 4 Basic Concepts of Trend › TRENDLINES › What Constitutes a Valid Breaking of a Trendline? — "As a general rule, a close beyond the trendline is more significant than just an intraday penetration."
+# evidence: 5 Major Reversal Patterns › VARIATIONS FROM THE IDEAL PATTERN — "Example of a false breakout, usually called a bull trap. Sometimes near the end of a major uptrend, prices will exceed a previous peak before failing."
+# source: shared/proofHumanize.ts:95 — фраза реакции fakeout на уровне
+# theme: пробои и ложные пробои
+# note: the VARIATIONS quote is the Figure 5.6a caption, which sits inside its subsection "The Term “Double Top” Greatly Overused"; the "bull trap" text and filters are in subsection "Filters" — hence the parent path. The only stop-related idea in the book is "avoid placing protective stops at obvious round numbers" (SUPPORT AND RESISTANCE › Round Numbers) — not a stop-hunt concept, left out.
+# review (independent trader review, 2026-10-31): fix, confidence medium — Пропущен раздел REVERSAL DAYS. Ситуация «прокол, а закрытие вернулось» на одном баре — это разворотный день; его сила зависит от ширины диапазона и объёма, а «кульминация продаж» (вынужденный выход лонгов) — ближайшее к «свипу» понятие книги. Тезисы про фильтры объединены, чтобы уложиться в 4 строки.
+# review added: 4 Basic Concepts of Trend › REVERSAL DAYS
+
+[[questions]]
+id = "q09-close-vs-wick"
+kind = "multi"
+question = "Почему триггер ждёт именно закрытия свечи над уровнем, а не просто прокола тенью? Это реально спасает от ложных пробоев или я просто захожу хуже по цене?"
+relevant = [
+    { book = "murphy-ta", path = "4 Basic Concepts of Trend › TRENDLINES › What Constitutes a Valid Breaking of a Trendline?" },
+    { book = "murphy-ta", path = "5 Major Reversal Patterns › VARIATIONS FROM THE IDEAL PATTERN › Filters" },
+    { book = "murphy-ta", path = "16 Money Management and Trading Tactics › TRADING TACTICS › Tactics on Breakouts: Anticipation or Reaction?" },
+]
+expected = """
+Закрытие за уровнем значимее внутридневного прокола: большинство чартистов требуют закрытия за прежним пиком/уровнем, а не просто прокола.
+Фильтры (закрытие, ценовой 1–3%, правило двух дней, закрытие пятницы, объём на пробое) применяются и к уровням поддержки/сопротивления; они уменьшают число ложных сигналов, но не безошибочны — плохие сигналы всё равно бывают.
+Компромисс есть: слишком маленький фильтр мало помогает от ложных сигналов, слишком большой — пропускается значительная часть начального движения.
+Ожидание фактического пробоя повышает шансы на успех, но цена входа хуже (позже/выше); вход в ожидании пробоя даёт лучшую цену, но больше риск; вход на откате — компромисс, но откат может не случиться.
+"""
+reviewed = true
+# evidence: 4 Basic Concepts of Trend › TRENDLINES › What Constitutes a Valid Breaking of a Trendline? — "If it’s too big, then much of the initial move will be missed before a valid signal is given."
+# evidence: 5 Major Reversal Patterns › VARIATIONS FROM THE IDEAL PATTERN › Filters — "Most chartists require a close beyond a previous resistance peak instead of just an intraday penetration."
+# evidence: 16 Money Management and Trading Tactics › TRADING TACTICS › Tactics on Breakouts: Anticipation or Reaction? — "Waiting for the actual breakout increases the odds of success, but the penalty is a later (higher) entry price."
+# source: frontend/src/locales/ru.ts:1122 — подсказка триггера «Закрытие >» в карточке сценария
+# theme: пробои и ложные пробои
+# note: the trendline section also says "The 1-3% rule and the two day rule are also applied to the breaking of important support and resistance levels". Possible extra: "2 Dow Theory › THE USE OF CLOSING PRICES AND THE PRESENCE OF LINES" ("Dow did not consider intraday penetrations valid.").
+# review (independent trader review, 2026-10-31): ok, confidence high — Закрытие против прокола, набор фильтров, компромисс размера фильтра и выбор «ожидание пробоя / сам пробой / откат» с худшей ценой входа точно взяты из трёх разных разделов, поэтому тип multi верен.
+
+[[questions]]
+id = "q10-breakout-volume"
+kind = "partial"
+question = "у уровня написано «сильный объём» — а насколько объём на пробое должен быть выше среднего, чтобы пробою можно было верить, а не считать его ловушкой?"
+relevant = [
+    { book = "murphy-ta", path = "7 Volume and Open Interest › INTERPRETATION OF VOLUME FOR ALL MARKETS › Volume as Confirmation in Price Patterns" },
+    { book = "murphy-ta", path = "5 Major Reversal Patterns › TWO TYPES OF PATTERNS: REVERSAL AND CONTINUATION › Preliminary Points Common to All Reversal Patterns" },
+    { book = "murphy-ta", path = "5 Major Reversal Patterns › VARIATIONS FROM THE IDEAL PATTERN" },
+]
+expected = """
+Из книги: пробой (завершение любой фигуры) должен сопровождаться более высокой торговой активностью, если сигнал настоящий; объём должен расти в направлении тренда.
+Из книги: на восходящих пробоях, особенно у оснований, рост объёма обязателен — без заметного увеличения объёма всю фигуру надо поставить под сомнение; на вершинах объём менее критичен.
+Из книги: пробой на слабом объёме с последующим снижением на сильном — негативная комбинация, типичная для ложного пробоя; объём помогает избежать части ложных пробоев, но не всех.
+Нет в книгах (честно сказать): конкретного порога — на сколько процентов или во сколько раз объём на пробое должен превышать средний — книга не даёт; число нельзя выдумывать.
+"""
+reviewed = true
+# evidence: 7 Volume and Open Interest › INTERPRETATION OF VOLUME FOR ALL MARKETS › Volume as Confirmation in Price Patterns — "As a rule, the resolution of all price patterns (the breakout point) should be accompanied by heavier trading activity if the signal given by that breakout is real."
+# evidence: 5 Major Reversal Patterns › TWO TYPES OF PATTERNS: REVERSAL AND CONTINUATION › Preliminary Points Common to All Reversal Patterns — "If the volume pattern does not show a significant increase during the upside price breakout, the entire price pattern should be questioned."
+# evidence: 5 Major Reversal Patterns › VARIATIONS FROM THE IDEAL PATTERN — "Notice that the upside breakout was on light volume and the subsequent decline on heavy volume—a negative chart combination. Watching the volume helps avoid some false breakouts, but not all."
+# source: shared/proofHumanize.ts:133 — фраза подтверждения объёмом в описании пруфа уровня
+# theme: объём
+# note: grep for "average volume", "above average", "times the average" finds nothing — the book gives only qualitative wording ("noticeable", "significant", "heavier"). Similar volume-on-breakout statements are repeated in many pattern sections (triangles, rectangle, H&S); "7 Volume and Open Interest › SUMMARY OF VOLUME AND OPEN INTEREST RULES" rule 10 is another candidate.
+# review (independent trader review, 2026-10-31): ok, confidence high — Качественные правила по объёму на пробое (обязателен у оснований, менее важен на вершинах, слабый объём на пробое = риск ложного пробоя) переданы верно. Поиск не нашёл в книге никакого числового порога объёма, так что partial честный.
+
+[[questions]]
+id = "q11-rsi-vs-relative-strength"
+kind = "multi"
+question = "В панели RSI подписан как «индекс относительной силы». Это то же самое, что relative strength, когда сравнивают альту с биткоином, типа ETH/BTC? Или это вообще разные вещи?"
+relevant = [
+    { book = "murphy-ta", path = "10 Oscillators and Contrary Opinion › THE RELATIVE STRENGTH INDEX (RSI)" },
+    { book = "murphy-ta", path = "17 The Link Between Stocks and Futures: Intermarket Analysis › RELATIVE STRENGTH ANALYSIS" },
+    { book = "murphy-ta", path = "17 The Link Between Stocks and Futures: Intermarket Analysis › RELATIVE STRENGTH AND SECTORS" },
+    { book = "murphy-ta", path = "17 The Link Between Stocks and Futures: Intermarket Analysis › RELATIVE STRENGTH AND INDIVIDUAL STOCKS" },
+]
+expected = """
+Это разные вещи: «relative strength» в названии RSI — неточное название (misnomer), которое часто путает.
+Relative strength (ratio analysis) — линия отношения двух инструментов (например, акция или сектор к S&P 500): растёт — числитель сильнее знаменателя, падает — знаменатель сильнее; к ней применяют трендовые линии и скользящие средние.
+RSI Уайлдера не сравнивает разные инструменты: это осциллятор одного инструмента на основе отношения средних приростов к средним потерям за период (обычно 14), со шкалой 0–100 (выше 70 — перекупленность, ниже 30 — перепроданность).
+Пара вроде ETH/BTC по смыслу ближе к линии отношения, а не к RSI; криптовалюты в книге не упоминаются.
+"""
+reviewed = true
+# evidence: 10 Oscillators and Contrary Opinion › THE RELATIVE STRENGTH INDEX (RSI) — "Wilder’s Relative Strength Index doesn’t really measure the relative strength between different entities and, in that sense, the name is somewhat misleading."
+# evidence: 17 The Link Between Stocks and Futures: Intermarket Analysis › RELATIVE STRENGTH ANALYSIS — "When the ratio line is rising, the numerator price is stronger than the denominator. When the ratio line is declining, the denominator market is stronger."
+# source: frontend/src/locales/ru.ts:2397 — подсказка к RSI в ключевых метриках теханализа (ta.km.rsi.tip)
+# theme: осцилляторы
+# note: ETH/BTC is just an instance of the ratio concept, so not marked partial; the reviewer may prefer partial because crypto is never mentioned. Possible extras: "17 … › RELATIVE STRENGTH AND SECTORS" (trendlines/MAs on RS lines) and the Glossary "Ratio analysis" entry ("Ratio analysis can be used to compare any two entities").
+# review (independent trader review, 2026-10-31): fix, confidence high — Тезис «к линии отношения применяют трендовые линии и скользящие средние» не подтверждается показанными разделами: в RSI-разделе это сказано про саму линию RSI, а для линии RS — в разделе RELATIVE STRENGTH AND SECTORS. Нужно добавить его и раздел про отдельные акции (акция / её индекс — прямой аналог альты к BTC); сами тезисы после этого верны.
+# review added: 17 The Link Between Stocks and Futures: Intermarket Analysis › RELATIVE STRENGTH AND SECTORS; 17 The Link Between Stocks and Futures: Intermarket Analysis › RELATIVE STRENGTH AND INDIVIDUAL STOCKS
+
+[[questions]]
+id = "q12-rejection-candle"
+kind = "partial"
+question = "в подсказке про дивергенцию сказано, что без «отбойной свечи» это ещё не вход. какая свеча считается отбойной — пин-бар, поглощение, что-то ещё?"
+relevant = [
+    { book = "murphy-ta", path = "12 Japanese Candlesticks › CANDLE PATTERN ANALYSIS › Reversal Patterns" },
+    { book = "murphy-ta", path = "12 Japanese Candlesticks › FILTERED CANDLE PATTERNS" },
+    { book = "murphy-ta", path = "12 Japanese Candlesticks › CONCLUSION" },
+    { book = "murphy-ta", path = "4 Basic Concepts of Trend › REVERSAL DAYS" },
+    { book = "murphy-ta", path = "12 Japanese Candlesticks › BASIC CANDLESTICKS" },
+]
+expected = """
+Из книги: терминов «отбойная свеча» и «пин-бар» нет; ближайшее — разворотные свечные модели: одиночные (молот, перевёрнутый молот, повешенный, падающая звезда), двойные (поглощение, харами, просвет в облаках/завеса из тёмных облаков), тройные (утренняя/вечерняя звезда); подробно описаны лишь завеса, просвет и звёзды, остальные только перечислены.
+Из книги: из одиночных свечей с длинной тенью описаны доджи: «надгробие» (только длинная верхняя тень — чем она длиннее, тем медвежистее) и «стрекоза» (только длинная нижняя тень — обычно считается довольно бычьей).
+Из книги: разворотная модель возможна только после тренда (краткосрочный тренд — по средней ~10 периодов); надёжнее она, когда осциллятор (стохастик %D, RSI, CCI, %R) в зоне перекупленности/перепроданности — фильтрация Грега Морриса.
+Из книги: на барах аналог — разворотный день: новый минимум и закрытие выше предыдущего закрытия (у вершины наоборот); чем шире диапазон и больше объём, тем значимее сигнал.
+Нет в книгах (честно сказать): что приложение считает «отбойной свечой» и правило «без неё нет входа после дивергенции» — это логика продукта, книга её не задаёт.
+"""
+reviewed = true
+# evidence: 12 Japanese Candlesticks › CANDLE PATTERN ANALYSIS › Reversal Patterns — "You cannot have a bullish reversal pattern in an uptrend."
+# evidence: 12 Japanese Candlesticks › FILTERED CANDLE PATTERNS — "Candle patterns are considered only when %D is in its presignal area."
+# evidence: 12 Japanese Candlesticks › CONCLUSION — "Engulfing Pattern (2) | Engulfing Pattern (2)"
+# evidence: 4 Basic Concepts of Trend › REVERSAL DAYS — "A bottom reversal day would be a new low during the day followed by a higher close."
+# source: frontend/src/utils/glossary.ts:279 — глоссарий: дивергенция требует подтверждения отбойной свечой
+# theme: свечные модели
+# note: the CONCLUSION quote is a row of the candle-pattern table (Bullish Reversals | Bearish Reversals); hammer, engulfing, piercing line etc. appear only as names there. Book view on confirming a divergence is oscillator-based ("10 … › THE RELATIVE STRENGTH INDEX (RSI) › Interpreting RSI": oscillator breaking a previous high/low confirms the divergence/failure swing) — not added, since the question asks about the candle. REVERSAL DAYS is the bar-chart analogue; drop it if the reviewer wants candles only.
+# review (independent trader review, 2026-10-31): fix, confidence medium — Пропущен раздел BASIC CANDLESTICKS: единственные одиночные свечи с длинной тенью, которые книга действительно описывает, — доджи «надгробие» и «стрекоза». Это ближайший аналог пин-бара, поэтому фраза «одиночные модели лишь перечислены» вводит в заблуждение. Тезисы сжаты до 5 строк.
+# review added: 12 Japanese Candlesticks › BASIC CANDLESTICKS
+
+[[questions]]
+id = "q13-hammer-confirm"
+kind = "partial"
+question = "Chart shows a hammer. Is that already a long signal or I need to wait next candle to confirm? And how long the lower wick should be vs the body?"
+relevant = [
+    { book = "murphy-ta", path = "12 Japanese Candlesticks › CONCLUSION" },
+    { book = "murphy-ta", path = "12 Japanese Candlesticks › CANDLE PATTERN ANALYSIS › Reversal Patterns" },
+    { book = "murphy-ta", path = "12 Japanese Candlesticks › FILTERED CANDLE PATTERNS" },
+    { book = "murphy-ta", path = "12 Japanese Candlesticks › BASIC CANDLESTICKS" },
+    { book = "murphy-ta", path = "12 Japanese Candlesticks › CANDLESTICK CHARTING" },
+]
+expected = """
+Из книги: молот (Hammer) — бычья разворотная модель из одной свечи (в списке бычьих разворотов; медвежья пара — повешенный, Hanging Man); саму модель книга подробно не описывает.
+Из книги: из одиночных свечей с длинной нижней тенью описан доджи-«стрекоза» (открытие ≈ закрытие, длинная нижняя тень, верхней нет) — обычно считается довольно бычьим; при этом главное в свечах — соотношение открытия и закрытия, а тени (максимум/минимум) японцы обычно не считают ключевыми.
+Из книги: разворотная модель действует только после предшествующего тренда (бычья — после снижения; тренд — по средней ~10 периодов); надёжность повышает фильтрация осциллятором (стохастик %D, RSI, CCI, %R в зоне перепроданности); свечи используют вместе с другими индикаторами.
+Нет в книгах (честно сказать): нужно ли ждать подтверждения следующей свечой и каким должно быть соотношение нижней тени и тела у молота — книга этого не определяет; пропорции выдумывать нельзя.
+"""
+reviewed = true
+# evidence: 12 Japanese Candlesticks › CONCLUSION — "Hammer (1) | Hanging Man (1)"
+# evidence: 12 Japanese Candlesticks › CANDLE PATTERN ANALYSIS › Reversal Patterns — "You must determine the trend, before you can utilize Japanese candle patterns effectively."
+# evidence: 12 Japanese Candlesticks › FILTERED CANDLE PATTERNS — "determination of overbought and oversold markets using traditional technical analysis will enhance a candle pattern’s predictive ability."
+# source: frontend/src/locales/en.ts:2378 — подсказка свечного паттерна «Молот» (ta.pattern.hammerpattern.tip)
+# theme: свечные модели
+# note: the word "hammer" occurs only in the CONCLUSION table. Closest shape description is the Dragonfly Doji in "12 … › BASIC CANDLESTICKS" (long lower shadow, no upper shadow, "usually considered quite bullish") — not a hammer, left out. Could arguably be "unanswerable" if the reviewer considers the table mention too thin.
+# review (independent trader review, 2026-10-31): fix, confidence medium — На вопрос «какой длины тень относительно тела» в книге есть два факта, которых нет в ключе: описание доджи-«стрекозы» (длинная нижняя тень, бычий) в BASIC CANDLESTICKS и замечание в CANDLESTICK CHARTING, что ключевое — открытие и закрытие, а тени обычно не считаются важными. Оба раздела нужно добавить.
+# review added: 12 Japanese Candlesticks › BASIC CANDLESTICKS; 12 Japanese Candlesticks › CANDLESTICK CHARTING
+
+[[questions]]
+id = "q14-rising-wedge"
+kind = "multi"
+question = "Почему восходящий клин считают медвежьим, если цена в нём растёт? И как его не спутать с восходящим треугольником, там ведь тоже минимумы повышаются?"
+relevant = [
+    { book = "murphy-ta", path = "6 Continuation Patterns › THE WEDGE FORMATION" },
+    { book = "murphy-ta", path = "6 Continuation Patterns › THE ASCENDING TRIANGLE" },
+]
+expected = """
+Клин — две сходящиеся к вершине линии тренда (как у симметричного треугольника), но с заметным наклоном вверх или вниз; формируется обычно от одного до трёх месяцев.
+Как и флаг, клин наклонён против преобладающего тренда, поэтому восходящий клин медвежий: в нисходящем тренде это фигура продолжения, а в конце восходящего тренда — признак разворота вниз (продолжающий клин в аптренде был бы наклонён вниз).
+У восходящего треугольника верхняя линия горизонтальная, нижняя растёт — покупатели агрессивнее продавцов; фигура бычья, где бы ни появилась, и завершается решающим закрытием выше плоской верхней линии на росте объёма.
+Отличие: в клине обе линии наклонены в одну сторону и сходятся, в восходящем треугольнике верхняя граница плоская.
+"""
+reviewed = true
+# evidence: 6 Continuation Patterns › THE WEDGE FORMATION — "As a rule, like the flag pattern, the wedge slants against the prevailing trend. Therefore, a falling wedge is considered bullish and a rising wedge is bearish."
+# evidence: 6 Continuation Patterns › THE ASCENDING TRIANGLE — "Notice that the upper trendline is flat, while the lower line is rising. This pattern indicates that buyers are more aggressive than sellers."
+# source: frontend/src/locales/ru.ts:2755 — описание фигуры «восходящий клин» в песочнице фигур
+# theme: фигуры
+# note: the book gives no deeper "why" than "slants against the prevailing trend". The Figure 6.8c caption (bearish rising wedge) sits inside "6 … › THE RECTANGLE FORMATION" due to layout. Optional: "6 Continuation Patterns › TRIANGLES" (shape definitions of the three triangles).
+# review (independent trader review, 2026-10-31): ok, confidence high — Объяснение «клин наклонён против тренда, как флаг» и различие клина и восходящего треугольника (сходящиеся наклонные линии против плоской верхней границы) полностью опираются на текст двух разделов.
+
+[[questions]]
+id = "q15-ema-vs-sma"
+kind = "multi"
+question = "У вас на графике EMA-лента, а golden cross везде считают по SMA 50/200. Есть разница, EMA или SMA? По EMA сигнал приходит раньше, но и ложных больше?"
+relevant = [
+    { book = "murphy-ta", path = "9 Moving Averages › THE MOVING AVERAGE: A SMOOTHING DEVICE WITH A TIME LAG" },
+    { book = "murphy-ta", path = "9 Moving Averages › The Use of One Moving Average" },
+    { book = "murphy-ta", path = "9 Moving Averages › SUMMARY" },
+]
+expected = """
+Простая средняя (SMA) даёт каждому дню одинаковый вес; экспоненциальная (EMA) придаёт больший вес свежим данным (и учитывает всю историю), поэтому при той же длине она чувствительнее простой.
+Общее правило книги: чем чувствительнее средняя, тем раньше сигналы, но тем больше ложных (whipsaws); более медленная надёжнее, но реагирует позже — это компромисс.
+Пересечение двух средних (double crossover, например 10 и 50 дней) запаздывает чуть больше одной средней, но даёт меньше ложных сигналов; в акциях популярны 50 дней и 40 недель (≈200 дней).
+Большинство техников используют две простые средние; EMA стали популярны, но нет реальных доказательств, что они работают лучше простой.
+"""
+reviewed = true
+# evidence: 9 Moving Averages › THE MOVING AVERAGE: A SMOOTHING DEVICE WITH A TIME LAG — "The 40 day exponential moving average (dotted line) is more sensitive than the simple arithmetic 40 day moving average (solid line)."
+# evidence: 9 Moving Averages › The Use of One Moving Average — "While the shorter average generates more false signals, it has the advantage of giving trend signals earlier in the move."
+# evidence: 9 Moving Averages › SUMMARY — "Although exponential averages have become popular, there’s no real evidence to prove that they work any better than the simple average."
+# source: frontend/src/locales/ru.ts:193 — подсказка кнопки EMA-ленты на тулбаре графика
+# theme: скользящие средние
+# note: the term "golden cross" and a 50/200 crossover are not in the book (it names 5/20, 10/50, 10/40 combos; 200 days only as "40 weeks"). "EMA gives more false signals" is not stated directly — it follows from "EMA is more sensitive" + "more sensitive = earlier but more whipsaws". The "EMA ribbon" in the app is not covered.
+# review (independent trader review, 2026-10-31): ok, confidence high — Веса SMA и EMA, большая чувствительность EMA (рис. 9.2), компромисс «раньше, но больше ложных», меньше ложных сигналов у двойного пересечения, вывод «нет доказательств, что EMA лучше» и популярные 50 дней и 40 недель — всё есть в тексте. Термина «golden cross» в книге нет, но о нём и не спрашивают.
+
+[[questions]]
+id = "q16-stop-vs-liquidation"
+kind = "partial"
+question = "чем мой стоп-лосс отличается от цены ликвидации? если торгую с плечом x20, может меня ликвидировать раньше, чем цена дойдёт до стопа?"
+relevant = [
+    { book = "murphy-ta", path = "1 Philosophy of Technical Analysis › A BRIEF COMPARISON OF TECHNICAL ANALYSIS IN STOCKS AND FUTURES › Lower Margin Requirements" },
+    { book = "murphy-ta", path = "16 Money Management and Trading Tactics › TYPES OF TRADING ORDERS" },
+    { book = "murphy-ta", path = "16 Money Management and Trading Tactics › REWARD TO RISK RATIOS" },
+    { book = "murphy-ta", path = "16 Money Management and Trading Tactics › MONEY MANAGEMENT › Some General Money Management Guidelines" },
+    { book = "murphy-ta", path = "16 Money Management and Trading Tactics › COMBINING TECHNICAL FACTORS AND MONEY MANAGEMENT" },
+]
+expected = """
+Из книги: стоп-ордер — приказ, который при достижении заданной цены становится рыночным; на лонге sell stop ставят ниже рынка, чтобы ограничить убыток; в быстром рынке исполнение может пройти хуже цены стопа.
+Из книги: торговля на марже даёт большое плечо — при марже 10% движение на 10% против позиции уничтожает вложенные деньги; из-за малой маржи даже небольшое движение против позиции ведёт к принудительной ликвидации.
+Из книги: поэтому стоп увязывают с управлением капиталом: маржа в одном рынке — не больше 10–15% капитала (всего в рынках — не больше 50%), риск на сделку — не больше 5%; стоп ставят так, чтобы убыток не превысил этот предел, и за валидной поддержкой/сопротивлением; более близкий стоп позволяет больший размер позиции.
+Нет в книгах (честно сказать): что такое «цена ликвидации» на криптобирже и как она считается (поддерживающая маржа, изолированная/кросс-маржа), точный порог для плеча x20 — книга этого не описывает.
+"""
+reviewed = true
+# evidence: 1 Philosophy of Technical Analysis › A BRIEF COMPARISON OF TECHNICAL ANALYSIS IN STOCKS AND FUTURES › Lower Margin Requirements — "a 10% move in either direction will either double the trader’s money or wipe it out."
+# evidence: 16 Money Management and Trading Tactics › TYPES OF TRADING ORDERS — "On a long position, a sell stop is placed below the market to limit a loss."
+# evidence: 16 Money Management and Trading Tactics › REWARD TO RISK RATIOS — "Because futures contracts require so little margin, even a slight move in the wrong direction results in forced liquidation."
+# source: frontend/src/utils/glossary.ts:327 — глоссарий: определение ликвидации
+# theme: стоп-лоссы
+# note: partial: book explains stop orders and margin leverage (futures, 10% margin) but not exchange liquidation-price mechanics. REWARD TO RISK RATIOS is the only place tying low margin to forced liquidation on a slight move.
+# review (independent trader review, 2026-10-31): fix, confidence medium — Ключ упускает прямой ответ книги, как не попасть под принудительную ликвидацию раньше стопа: ограничивать маржу (10–15% на рынок, 50% всего), риск (5%) и ставить стоп с учётом размера позиции. Это есть в разделах о правилах управления капиталом и о сочетании технических факторов с ним; их нужно добавить.
+# review added: 16 Money Management and Trading Tactics › MONEY MANAGEMENT › Some General Money Management Guidelines; 16 Money Management and Trading Tactics › COMBINING TECHNICAL FACTORS AND MONEY MANAGEMENT
+
+[[questions]]
+id = "q17-rr-breakeven-winrate"
+kind = "partial"
+question = "пишут, что с RR=2 хватит 40% прибыльных сделок, чтобы быть в плюсе. а какой минимальный винрейт нужен при RR 1.5 и как это считается?"
+relevant = [
+    { book = "murphy-ta", path = "16 Money Management and Trading Tactics › REWARD TO RISK RATIOS" },
+    { book = "murphy-ta", path = "C The Essentials of Building a Trading System › STEP 5: EVALUATE RESULTS" },
+]
+expected = """
+Из книги: даже лучшие фьючерсные трейдеры зарабатывают лишь примерно на 40% сделок — большинство сделок убыточны.
+Из книги: в плюс выходят, только если сумма прибыльных сделок в долларах больше суммы убыточных; для этого сравнивают цель по прибыли с возможным убытком, распространённый ориентир — прибыль минимум в 3 раза больше риска (3 к 1).
+Из книги (приложение C): profit factor = валовая прибыль / валовой убыток (долгосрочным трейдерам — 2.0 и выше); средняя сделка (матожидание) должна покрывать комиссии и проскальзывание.
+Нет в книгах (честно сказать): формулы безубыточного процента прибыльных сделок и готовой цифры для RR 1.5; связку «RR=2 → хватит 40%» книга не формулирует (40% у Мерфи — наблюдение о лучших трейдерах, а не порог для RR=2).
+"""
+reviewed = true
+# evidence: 16 Money Management and Trading Tactics › REWARD TO RISK RATIOS — "the only way to come out ahead is to ensure that the dollar amount of the winning trades is greater than that of the losing trades."
+# evidence: C The Essentials of Building a Trading System › STEP 5: EVALUATE RESULTS — "This statistic tells us how many dollars our system made for every $1 it lost, and is a measure of risk."
+# source: frontend/src/utils/glossary.ts:355 — глоссарий: RR=2 и безубыточный процент правильных сделок
+# theme: соотношение риска и прибыли
+# note: partial: the breakeven-winrate formula is not in the book; any computed value is arithmetic outside the book.
+# review (independent trader review, 2026-10-31): ok, confidence high — 40% прибыльных сделок у лучших трейдеров, ориентир 3:1 и profit factor / средняя сделка из прил. C переданы точно. Поиск не нашёл в книге формулы безубыточного винрейта, так что partial и честный отказ по RR 1.5 верны.
+
+[[questions]]
+id = "q18-position-size-1pct"
+kind = "partial"
+question = "если 1R это расстояние от входа до стопа, то как посчитать объём позиции, чтобы стоп стоил ровно 1% депо? допустим депо $5000, стоп в 3% от входа"
+relevant = [
+    { book = "murphy-ta", path = "16 Money Management and Trading Tactics › COMBINING TECHNICAL FACTORS AND MONEY MANAGEMENT" },
+    { book = "murphy-ta", path = "16 Money Management and Trading Tactics › MONEY MANAGEMENT › Some General Money Management Guidelines" },
+]
+expected = """
+Из книги: сначала задают максимальную сумму риска на сделку (у Мерфи — не более 5% капитала на один рынок; пример: счёт $100 000 → риск не более $5 000), затем стоп ставят так, чтобы при его срабатывании по всей позиции потерять не больше этой суммы.
+Из книги: более близкий стоп позволяет взять больший объём, более далёкий — уменьшает размер позиции; при этом стоп должен стоять за валидным уровнем поддержки (для лонга), а не только из денежных соображений.
+Нет в книгах (честно сказать): понятий R / 1R (R-multiple), правила риска 1% и явной формулы «объём = сумма риска / расстояние до стопа»; расчёт для депо $5000 и стопа 3% — арифметика вне книги.
+"""
+reviewed = true
+# evidence: 16 Money Management and Trading Tactics › COMBINING TECHNICAL FACTORS AND MONEY MANAGEMENT — "A closer protective stop would permit the taking of larger positions. A looser stop would reduce the size of the position."
+# evidence: 16 Money Management and Trading Tactics › MONEY MANAGEMENT › Some General Money Management Guidelines — "This is an important consideration in deciding how many contracts to trade and how far away a protective stop should be placed."
+# source: frontend/src/utils/glossary.ts:367 — глоссарий: R-multiple, 1R как дистанция вход–стоп
+# theme: размер позиции
+# note: partial vs factual is debatable: the book gives the principle with a $100k/5% example; the R-multiple term, the 1% rule and the explicit formula are not in it. Arithmetic (not from the book): 1% of $5000 = $50; $50 / 3% ≈ $1667 position notional.
+# review (independent trader review, 2026-10-31): ok, confidence high — Тезисы точно соответствуют разделам 16 главы (риск ≤5% капитала на рынок, стоп по сумме риска, ближе стоп — больше позиция, стоп за валидной поддержкой); понятий R/1R, правила 1% и формулы в книге действительно нет (проверено поиском).
+
+[[questions]]
+id = "q19-funding-now"
+kind = "unanswerable"
+question = "какой сейчас фандинг по BTC на Binance и Bybit? в подсказке написано, что выше 0.05% за 8 часов это риск сквиза — мы сейчас к этому близко?"
+relevant = []
+expected = """
+Честный отказ: в книге (Мерфи, 1999) нет текущих рыночных данных и данных бирж Binance/Bybit; ставка финансирования (funding) бессрочных контрактов и порог 0.05% за 8 часов в книге не описаны.
+Без выдуманных значений фандинга и без оценки «близко/далеко к сквизу».
+"""
+reviewed = true
+# source: frontend/src/utils/glossary.ts:294 — глоссарий: порог funding 0.05%/8h как риск сквиза
+# theme: деривативы (funding, OI, ликвидации)
+# note: Contrary opinion (crowded consensus → reversal risk) is conceptually related but says nothing about funding or current data.
+# review (independent trader review, 2026-10-31): ok, confidence high — Поиск по книге (funding, perpetual, squeeze, Binance) ничего не даёт; «Perpetual Contract™» в гл. 8 — это способ построения непрерывного графика фьючерсов, не бессрочный своп. Честный отказ сформулирован верно.
+
+[[questions]]
+id = "q20-liq-clusters-now"
+kind = "unanswerable"
+question = "where are the big long liquidation clusters on BTC right now relative to the current price? want to check my stop isnt sitting right next to one before I go long"
+relevant = []
+expected = """
+Честный отказ: в книге нет текущих данных по BTC и нет карт/кластеров ликвидаций — где они сейчас относительно цены, по книге сказать нельзя.
+Без выдуманных уровней и цен. Можно (необязательно) сослаться на общие принципы книги о стопах (не ставить их на очевидных круглых уровнях, ставить за валидной поддержкой), но без конкретных цифр.
+"""
+reviewed = true
+# source: frontend/src/locales/en.ts:1794 — подсказка линии кластера ликвидаций: не ставить стоп рядом (стоп-хант)
+# theme: деривативы (funding, OI, ликвидации)
+# note: Could be argued as partial with '4 › SUPPORT AND RESISTANCE › The Importance of Round Numbers as Support and Resistance' ("avoid placing protective stops at obvious round numbers"), but the question asks for current cluster locations, which the book cannot give.
+# review (independent trader review, 2026-10-31): ok, confidence high — Текущих данных и карт ликвидаций в книге нет; необязательная ссылка на принципы постановки стопов (не на круглых числах, за валидной поддержкой) подтверждается текстом гл. 4 и 16.
+
+[[questions]]
+id = "q21-oi-new-longs-vs-short-covering"
+kind = "multi"
+question = "В описании пишут «источник импульса: рост ОИ или закрытие шортов». Как отличить рост на новых лонгах от шорт-сквиза, если цена в обоих случаях идёт вверх?"
+relevant = [
+    { book = "murphy-ta", path = "7 Volume and Open Interest › INTERPRETATION OF OPEN INTEREST IN FUTURES" },
+    { book = "murphy-ta", path = "7 Volume and Open Interest › VOLUME AND OPEN INTEREST AS SECONDARY INDICATORS › Open Interest in Futures" },
+]
+expected = """
+Различать по открытому интересу (ОИ). Механика по книге: ОИ растёт, только когда обе стороны сделки открывают новые позиции, и падает, когда обе закрывают старые; если один входит, а другой выходит — ОИ не меняется. По чистому изменению ОИ видно, входят деньги в рынок или уходят.
+Рост цены при растущем ОИ — в рынок приходят новые деньги, агрессивные новые покупки — бычий признак.
+Рост цены при падающем ОИ — ралли идёт в основном за счёт закрытия убыточных шортов, деньги уходят из рынка; это медвежий признак: рост, вероятно, выдохнется, когда покрытие шортов закончится.
+Нюансы: если ОИ накапливался в боковике, после пробоя вверх вынужденное закрытие шортов усиливает движение; в самом начале нового тренда ОИ может слегка снизиться, поэтому не стоит переоценивать очень краткосрочные изменения ОИ.
+"""
+reviewed = true
+# evidence: 7 Volume and Open Interest › INTERPRETATION OF OPEN INTEREST IN FUTURES — "If, however, prices are rising and open interest declines, the rally is being caused primarily by short covering (holders of losing short positions being forced to cover those positions)."
+# source: landing/i18n/dictionaries.ts:510 — блок proof.alignment: рост ОИ vs закрытие шортов как источник импульса
+# theme: деривативы (funding, OI, ликвидации)
+# note: Parent path also covers the subsection 'Other Situations Where Open Interest Is Important' (points 3-4 used in lines 3-4). Mechanics of how OI changes is in '7 › VOLUME AND OPEN INTEREST AS SECONDARY INDICATORS › Open Interest in Futures' — supportive, not required.
+# review (independent trader review, 2026-10-31): fix, confidence medium — Пропущен раздел, где книга объясняет, почему ОИ вообще различает новые позиции и закрытие старых: «How Changes in Open Interest Occur» (оба открывают — ОИ растёт, оба закрывают — падает, смешанно — без изменений). Это основа ответа на «как отличить», поэтому раздел нужен, а тип становится multi.
+# review added: 7 Volume and Open Interest › VOLUME AND OPEN INTEREST AS SECONDARY INDICATORS › Open Interest in Futures
+
+[[questions]]
+id = "q22-cpi-blackout"
+kind = "unanswerable"
+question = "зачем советуют не торговать ±30 минут вокруг выхода CPI? и во сколько по Москве он обычно выходит?"
+relevant = []
+expected = """
+Честный отказ: в книге нет правила не торговать ±30 минут вокруг выхода CPI и нет расписания публикации макростатистики (времени выхода по Москве).
+Без выдуманного времени и без причин, приписанных книге.
+"""
+reviewed = true
+# source: frontend/src/utils/glossary.ts:413 — глоссарий: торговый blackout вокруг CPI
+# theme: сессии и время
+# note: Tangential only: '10 › ... › Watch the Market’s Reaction to Fundamental News' (how to read reaction to news) and 'TYPES OF TRADING ORDERS' (stop fills beyond stop price in a fast market) — neither explains a CPI blackout.
+# review (independent trader review, 2026-10-31): ok, confidence high — Правила про ±30 минут вокруг CPI и расписания макростатистики в книге нет (проверено поиском по CPI/news/report). Ближайший раздел «Watch the Market’s Reaction to Fundamental News» о другом: о реакции цены на новости в зоне перекупленности. Отказ корректен.
+
+[[questions]]
+id = "q23-hl-break-trend-change"
+kind = "multi"
+question = "в разборе написано, что структура была восходящая, но последний пивот пробил HL — и это уже переход в даунтренд. почему именно пробой последнего higher low считается сломом тренда, а не просто глубокой коррекцией?"
+relevant = [
+    { book = "murphy-ta", path = "4 Basic Concepts of Trend › SUPPORT AND RESISTANCE" },
+    { book = "murphy-ta", path = "2 Dow Theory › BASIC TENETS › 6. A Trend Is Assumed to Be in Effect Until It Gives Definite Signals That It Has Reversed." },
+    { book = "murphy-ta", path = "4 Basic Concepts of Trend › PERCENTAGE RETRACEMENTS" },
+]
+expected = """
+Аптренд по книге — серия последовательно повышающихся пиков и впадин; чтобы он продолжался, каждый новый минимум (поддержка) должен быть выше предыдущего.
+Если коррекция доходит до предыдущего минимума — это ранний сигнал, что тренд заканчивается или переходит в боковик; если этот уровень поддержки пробит — вероятен разворот вверх→вниз.
+Коррекция или разворот: обычные коррекции откатывают от 1/3 до 2/3 (чаще около 50%) предыдущего движения; если откат идёт дальше 2/3 (66%), шансы уже на стороне разворота, а не просто коррекции.
+Отличить обычную коррекцию от первой волны нового тренда — самая трудная задача; теоретики Доу расходятся: «failure swing» (более низкий пик + пробой минимума) даёт чёткий сигнал, а при «nonfailure swing» (пробит только минимум, без более низкого пика) часть ждёт ещё и более низкого максимума.
+Тренд считается действующим, пока не даст определённых сигналов разворота; шансы обычно на стороне продолжения существующего тренда.
+"""
+reviewed = true
+# evidence: 4 Basic Concepts of Trend › SUPPORT AND RESISTANCE — "If the support level is violated, then a trend reversal from up to down is likely."
+# evidence: 2 Dow Theory › BASIC TENETS › 6. A Trend Is Assumed to Be in Effect Until It Gives Definite Signals That It Has Reversed. — "being able to distinguish between a normal secondary correction in an existing trend and the first leg of a new trend in the opposite direction."
+# source: backend/src/mastra/skills/analysisSkills.ts:126 — правило слома структуры: пробой последнего HL в аптренде = переход в даунтренд
+# theme: тренд и фазы
+# note: The trend definition (higher peaks and troughs) is restated in the SUPPORT AND RESISTANCE text; '4 › DEFINITION OF TREND' could be added if a reviewer wants it explicit. The path SUPPORT AND RESISTANCE is the parent; the answer is in its own text, before its subsections.
+# review (independent trader review, 2026-10-31): fix, confidence medium — Вопрос прямо противопоставляет слом тренда и «глубокую коррекцию». У книги на это есть прямой критерий в PERCENTAGE RETRACEMENTS: коррекции обычно 33–66%, а откат глубже 2/3 говорит скорее о развороте, чем о коррекции. В ключе этого нет. Остальные тезисы верны.
+# review added: 4 Basic Concepts of Trend › PERCENTAGE RETRACEMENTS
+
+[[questions]]
+id = "q24-trend-to-range-signs"
+kind = "multi"
+question = "Как понять, что тренд закончился и рынок ушёл во флэт? По каким признакам на графике это видно до того, как уже поздно?"
+relevant = [
+    { book = "murphy-ta", path = "4 Basic Concepts of Trend › TREND HAS THREE DIRECTIONS" },
+    { book = "murphy-ta", path = "4 Basic Concepts of Trend › SUPPORT AND RESISTANCE" },
+    { book = "murphy-ta", path = "5 Major Reversal Patterns › TWO TYPES OF PATTERNS: REVERSAL AND CONTINUATION › Preliminary Points Common to All Reversal Patterns" },
+    { book = "murphy-ta", path = "15 Computers and Trading Systems › WELLES WILDER’S PARABOLIC AND DIRECTIONAL MOVEMENT SYSTEMS › DMI and ADX" },
+]
+expected = """
+Флэт (торговый диапазон) — горизонтальные пики и впадины, равновесие спроса и предложения; так рынок движется минимум треть времени; трендовые инструменты в нём работают плохо, разумнее стоять вне рынка.
+Ранние ценовые признаки: цена не может обновить предыдущий пик в аптренде; коррекция доходит до предыдущего минимума — предупреждение, что тренд кончается или переходит в боковик.
+Пробой важной трендовой линии сигнализирует о смене тренда, но не обязательно о развороте — это может быть начало бокового паттерна.
+ADX: падающий ADX — нетрендовая среда; разворот ADX вниз от уровня выше 40 — ранний признак ослабления тренда и начала диапазона; рост обратно выше 20 — признак начала нового тренда.
+"""
+reviewed = true
+# evidence: 4 Basic Concepts of Trend › TREND HAS THREE DIRECTIONS — "They usually work very poorly, or not at all, when markets enter these lateral or “trendless” phases."
+# evidence: 4 Basic Concepts of Trend › SUPPORT AND RESISTANCE — "it may be an early warning that the uptrend is ending or at least moving from an uptrend to a sideways trend."
+# evidence: 5 Major Reversal Patterns › TWO TYPES OF PATTERNS: REVERSAL AND CONTINUATION › Preliminary Points Common to All Reversal Patterns — "The breaking of a major up trendline might signal the beginning of a sideways price pattern, which later would be identified as either the reversal or consolidation type."
+# evidence: 15 Computers and Trading Systems › WELLES WILDER’S PARABOLIC AND DIRECTIONAL MOVEMENT SYSTEMS › DMI and ADX — "Be forewarned, however, that when the ADX line starts to drop from above the 40 level, that is an early sign that the trend is weakening."
+# source: backend/src/agent/Readme.md:79 — детектор смены режима: тренд↔флэт, расширение↔сжатие
+# theme: рыночные режимы
+# note: Other supportive sections not included: '4 › TRENDLINES › How to Use the Trendline' (trendline break = early warning), '5 › THE HEAD AND SHOULDERS REVERSAL PATTERN' ("the trend has shifted from up to sideways"), '9 › BAND WIDTH MEASURES VOLATILITY'.
+# review (independent trader review, 2026-10-31): ok, confidence medium — Все четыре тезиса подтверждаются показанным текстом: треть времени во флэте, первые предупреждения по уровням поддержки и сопротивления, пробой трендовой линии как смена тренда, но не обязательно разворот, ADX (разворот вниз от 40 и подъём выше 20). Набор разделов достаточен.
+
+[[questions]]
+id = "q25-bars-vs-touches"
+kind = "partial"
+question = "В пруфе написано «12 баров в полосе уровня» — это то же самое, что 12 касаний? Если цена просто долго болталась у уровня, он от этого становится сильнее?"
+relevant = [
+    { book = "murphy-ta", path = "4 Basic Concepts of Trend › SUPPORT AND RESISTANCE › The Psychology of Support and Resistance" },
+    { book = "murphy-ta", path = "4 Basic Concepts of Trend › TRENDLINES › How to Determine the Significance of a Trendline" },
+]
+expected = """
+Из книги: значимость уровня поддержки/сопротивления зависит от того, сколько торговли прошло в его зоне, и оценивается тремя способами: время, проведённое ценой в зоне, объём и давность этой торговли.
+Из книги: чем дольше цены торгуются в зоне уровня, тем он значимее (пример: 3 недели консолидации важнее 3 дней) — то есть долгое «болтание» у уровня его усиливает; торговля на большом объёме тоже делает уровень важнее.
+Из книги: время у уровня и число тестов — разные мерки; для трендовой линии книга называет их отдельно: длительность и количество тестов (касаний).
+Нет в книгах (честно сказать): как именно продукт считает «бары в полосе уровня» (ширина полосы, ATR и т.п.) — это внутренняя метрика приложения.
+"""
+reviewed = true
+# evidence: 4 Basic Concepts of Trend › SUPPORT AND RESISTANCE › The Psychology of Support and Resistance — "The longer the period of time that prices trade in a support or resistance area, the more significant that area becomes."
+# evidence: 4 Basic Concepts of Trend › TRENDLINES › How to Determine the Significance of a Trendline — "what determines the significance of a trendline? The answer to that question is twofold—the longer it has been intact and the number of times it has been tested."
+# source: backend/src/mastra/skills/proofSkills.ts:59 — правило: touchCount — бары в ±ATR-полосе уровня, а не отдельные касания
+# theme: поддержка и сопротивление
+# note: Trendline section is used by analogy for the 'touches' part (the book states touch count explicitly only for trendlines).
+# review (independent trader review, 2026-10-31): ok, confidence medium — Время, объём и давность как меры значимости уровня, а также пример «3 недели важнее 3 дней» взяты из книги точно. Длительность и число касаний названы только для трендовой линии, и тезис это оговаривает. Метрики «баров в полосе» в книге нет; поиск по tested/touches других мерок для горизонтальных уровней не нашёл.
+
+[[questions]]
+id = "q26-false-breakdown"
+kind = "multi"
+question = "Цена проколола уровень вниз и закрылась обратно выше — ложный пробой. Это уже сигнал на лонг или разворот этим ещё не подтверждён?"
+relevant = [
+    { book = "murphy-ta", path = "4 Basic Concepts of Trend › TRENDLINES › What Constitutes a Valid Breaking of a Trendline?" },
+    { book = "murphy-ta", path = "5 Major Reversal Patterns › VARIATIONS FROM THE IDEAL PATTERN" },
+    { book = "murphy-ta", path = "4 Basic Concepts of Trend › REVERSAL DAYS" },
+    { book = "murphy-ta", path = "4 Basic Concepts of Trend › TRENDLINES › How to Handle Small Trendline Penetrations" },
+]
+expected = """
+Закрытие за уровнем значимее внутридневного прокола; если цена проколола линию внутри дня, но закрылась обратно, жёсткого правила нет — такой мелкий прокол часто лучше игнорировать, особенно если дальнейшее движение подтверждает уровень. Для отсева используют фильтры (1–3% на закрытии, правило двух дней, закрытие пятницы), в том числе для уровней поддержки/сопротивления.
+Ложные пробои («ловушки») случаются; фильтры уменьшают их число, но не исключают; объём помогает распознать часть ложных пробоев.
+День разворота (новый минимум и закрытие выше предыдущего) сам по себе не очень важен — значим только в контексте другой технической информации; широкий диапазон и высокий объём усиливают сигнал.
+Разворот этим не подтверждён: отскок от прежнего минимума — нормальное поведение рынка, двойное дно существует только после пробоя промежуточного пика; шансы обычно на стороне продолжения текущего тренда, разумно дождаться завершения фигуры.
+"""
+reviewed = true
+# evidence: 4 Basic Concepts of Trend › TRENDLINES › What Constitutes a Valid Breaking of a Trendline? — "As a general rule, a close beyond the trendline is more significant than just an intraday penetration."
+# evidence: 5 Major Reversal Patterns › VARIATIONS FROM THE IDEAL PATTERN — "Because the technical odds usually favor continuation of the present trend, it is usually wise to await completion of the pattern before taking action."
+# evidence: 4 Basic Concepts of Trend › REVERSAL DAYS — "By itself, this formation is not of major importance. But, taken in the context of other technical information, it can sometimes be significant."
+# source: backend/src/mastra/skills/proofSkills.ts:61 — определение фейкаута: провал пробоя вниз бычий, но сам по себе разворот не доказывает
+# theme: пробои и ложные пробои
+# note: Parent VARIATIONS FROM THE IDEAL PATTERN covers 'Filters' (false breakout/bull trap, volume) and 'The Term “Double Top” Greatly Overused' (await completion). Also close: '4 › TRENDLINES › How to Handle Small Trendline Penetrations' (intraday break, close back — sometimes best to ignore). The book does not explicitly call a failed breakdown a buy signal.
+# review (independent trader review, 2026-10-31): fix, confidence medium — Пропущен подраздел, который описывает ровно этот сценарий: внутридневной прокол линии с закрытием обратно. Книга говорит, что жёсткого правила нет и мелкий прокол часто лучше игнорировать. Категоричное «пробой не считается валидным» сильнее, чем у Мерфи. В тезис 4 добавлен книжный критерий подтверждения дна: пробой промежуточного пика.
+# review added: 4 Basic Concepts of Trend › TRENDLINES › How to Handle Small Trendline Penetrations
+
+[[questions]]
+id = "q27-obv-hidden-distribution"
+kind = "partial"
+question = "в анализе пишут «hidden distribution»: цена растёт, а OBV падает. это то же самое, что скрытая дивергенция, или другое?"
+relevant = [
+    { book = "murphy-ta", path = "7 Volume and Open Interest › INTERPRETATION OF VOLUME FOR ALL MARKETS › On Balance Volume" },
+    { book = "murphy-ta", path = "2 Dow Theory › BASIC TENETS › 3. Major Trends Have Three Phases." },
+]
+expected = """
+Из книги: линия OBV должна идти в направлении ценового тренда; если цена растёт, а OBV не подтверждает (падает), это дивергенция, предупреждающая о возможном развороте (медвежья дивергенция OBV); важен тренд линии OBV, а не её абсолютные значения.
+Из книги: «распределение» (distribution) по теории Доу — поздняя фаза роста (бычьи новости, растёт участие публики), когда информированные участники начинают продавать раньше остальных.
+Нет в книгах (честно сказать): терминов «скрытая дивергенция» (hidden divergence) и «hidden distribution» в книге нет — сравнить их по книге нельзя; описанная ситуация «цена вверх, OBV вниз» у Мерфи — обычная дивергенция OBV.
+"""
+reviewed = true
+# evidence: 7 Volume and Open Interest › INTERPRETATION OF VOLUME FOR ALL MARKETS › On Balance Volume — "It’s when the volume line fails to move in the same direction as prices that a divergence exists and warns of a possible trend reversal."
+# evidence: 2 Dow Theory › BASIC TENETS › 3. Major Trends Have Three Phases. — "the same informed investors who began to “accumulate” near the bear market bottom (when no one else wanted to buy) begin to “distribute” before anyone else starts selling."
+# source: backend/src/mastra/skills/analysisSkills.ts:289 — аномалия OBV: рост цены при падающем OBV = скрытое распределение
+# theme: объём
+# note: Figure 7.7 (in subsection 'Alternatives to OBV') shows a bearish OBV divergence; the On Balance Volume text is sufficient.
+# review (independent trader review, 2026-10-31): ok, confidence medium — Тезисы про OBV (тренд линии, дивергенция как предупреждение) и фазу распределения по Доу точны. Терминов hidden divergence и hidden distribution в книге нет (проверено поиском), так что тип partial верен.
+
+[[questions]]
+id = "q28-rsi-overbought-strength"
+kind = "multi"
+question = "RSI выше 70, а в разборе пишут, что тренд сильный и это не сигнал на разворот. разве перекупленность не значит, что скоро откат? когда RSI выше 70 — это сила, а когда слабость?"
+relevant = [
+    { book = "murphy-ta", path = "10 Oscillators and Contrary Opinion › THE RELATIVE STRENGTH INDEX (RSI) › Interpreting RSI" },
+    { book = "murphy-ta", path = "10 Oscillators and Contrary Opinion › WHEN OSCILLATORS ARE MOST USEFUL" },
+    { book = "murphy-ta", path = "10 Oscillators and Contrary Opinion › THE IMPORTANCE OF TREND" },
+    { book = "murphy-ta", path = "10 Oscillators and Contrary Opinion › USING THE 70 AND 30 LINES TO GENERATE SIGNALS" },
+]
+expected = """
+RSI выше 70 — зона перекупленности: предупреждение, что движение растянуто, а не сигнал разворота сам по себе; в бычьих рынках уровнем перекупленности обычно становится 80.
+Сила: любой сильный тренд быстро даёт экстремум осциллятора; в сильном аптренде рынок может долго оставаться перекупленным — это не повод закрывать лонг (тем более шортить). В начале нового тренда после важного пробоя осциллятор лучше игнорировать; по мере созревания тренда его сигналы важнее.
+Слабость: первый заход в зону — лишь предупреждение; важен второй — если RSI не подтверждает новый ценовой максимум (дивергенция) или даёт top failure swing (пик выше 70 ниже предыдущего и пробой промежуточного минимума); возврат RSI под линию 70 многие используют как сигнал продажи.
+Контекст тренда: сигналы осцилляторов на продажу лучше всего работают в даунтренде — шортить перекупленность стоит в нисходящем тренде, а в аптренде покупают перепроданность.
+"""
+reviewed = true
+# evidence: 10 Oscillators and Contrary Opinion › THE RELATIVE STRENGTH INDEX (RSI) › Interpreting RSI — "In strong uptrends, overbought markets can stay overbought for some time. Just because the oscillator has moved into the upper region is not reason enough to liquidate a long position"
+# evidence: 10 Oscillators and Contrary Opinion › WHEN OSCILLATORS ARE MOST USEFUL — "in the early stages of a new trend, following an important breakout, oscillators often reach extremes very quickly and stay there for awhile."
+# source: backend/src/mastra/skills/analysisSkills.ts:175 — правило: перекупленность RSI в сильном аптренде = сила тренда, а не разворот
+# theme: осцилляторы
+# note: Close to the existing golden question 'rsi-overbought' but asks specifically strength vs weakness.
+# review (independent trader review, 2026-10-31): fix, confidence medium — На вопрос «когда выше 70 — сила, а когда слабость» книга прямо отвечает трендовым контекстом: sell-сигналы осцилляторов лучше в даунтренде, «sell short when overbought in a downtrend» (THE IMPORTANCE OF TREND). Кроме того, возврат под 70 — книжный сигнал продажи (USING THE 70 AND 30 LINES). В ключе нет ни того, ни другого.
+# review added: 10 Oscillators and Contrary Opinion › THE IMPORTANCE OF TREND; 10 Oscillators and Contrary Opinion › USING THE 70 AND 30 LINES TO GENERATE SIGNALS
+
+[[questions]]
+id = "q29-rsi-stochrsi-combo"
+kind = "partial"
+question = "Зачем для лонга на отскок смотрят и RSI ниже 25, и Stoch RSI ниже 10 одновременно? Это же почти один и тот же индикатор, нет?"
+relevant = [
+    { book = "murphy-ta", path = "10 Oscillators and Contrary Opinion › STOCHASTICS (K%D)" },
+    { book = "murphy-ta", path = "10 Oscillators and Contrary Opinion › OSCILLATOR USAGE IN CONJUNCTION WITH TREND › Interpretation of Oscillators" },
+]
+expected = """
+Из книги: стохастик (положение закрытия в диапазоне за период) и RSI — разные осцилляторы; RSI менее волатилен и реже достигает экстремумов, чем стохастик.
+Из книги: Мерфи советует сочетать стохастик с RSI; лучшие сигналы — когда оба осциллятора одновременно в зоне перекупленности/перепроданности.
+Из книги: при этом большинство осцилляторов похожи и интерпретируются почти одинаково.
+Нет в книгах (честно сказать): индикатор Stoch RSI (стохастик, рассчитанный от RSI) и пороги 25 и 10 в книге не описаны.
+"""
+reviewed = true
+# evidence: 10 Oscillators and Contrary Opinion › STOCHASTICS (K%D) — "The RSI line is less volatile and reaches extremes less frequently than stochastics. The best signals occur when both oscillators are in overbought or oversold territory."
+# evidence: 10 Oscillators and Contrary Opinion › OSCILLATOR USAGE IN CONJUNCTION WITH TREND › Interpretation of Oscillators — "While there are many different ways to construct momentum oscillators, the actual interpretation differs very little from one technique to another. Most oscillators look very much alike."
+# source: backend/src/mastra/prompts/scenarioPrompt.ts:418 — фильтр входа против движения: двойная перепроданность RSI(14) и StochRSI
+# theme: осцилляторы
+# note: Book compares RSI with classic Stochastics, not StochRSI. Related caveat not required: '10 › THE IMPORTANCE OF TREND' (oscillator buy signals work best in uptrends).
+# review (independent trader review, 2026-10-31): ok, confidence high — Все тезисы подтверждаются: RSI менее волатилен, чем стохастик (Fig. 10.17); сочетать с RSI советуют, лучшие сигналы — когда оба в экстремуме; осцилляторы мало отличаются в интерпретации. Stoch RSI и порогов 25/10 в книге нет (проверено поиском).
+
+[[questions]]
+id = "q30-failed-bullish-divergence"
+kind = "multi"
+question = "была бычья дивергенция по RSI, но она не отработала и цена пошла ниже. это теперь уже медвежий сигнал или просто дивергенция «сбросилась»?"
+relevant = [
+    { book = "murphy-ta", path = "10 Oscillators and Contrary Opinion › THE RELATIVE STRENGTH INDEX (RSI) › Interpreting RSI" },
+    { book = "murphy-ta", path = "10 Oscillators and Contrary Opinion › THE IMPORTANCE OF TREND" },
+    { book = "murphy-ta", path = "10 Oscillators and Contrary Opinion › USING THE 70 AND 30 LINES TO GENERATE SIGNALS" },
+]
+expected = """
+По книге дивергенция — лишь предупреждение; бычья дивергенция или bottom failure swing подтверждаются, когда RSI пробивает свой предыдущий пик (многие трейдеры также считают подтверждением возврат RSI выше 30); пока подтверждения нет, сигнала на покупку нет.
+Если цена ушла ниже, дивергенция не подтвердилась; книга предостерегает переоценивать дивергенции и использовать их как повод торговать против основного тренда — это обычно дорого обходится.
+Сигналы осцилляторов на покупку лучше работают в аптренде, на продажу — в даунтренде; начинать нужно с определения основного тренда.
+Отдельного правила «неотработавшая бычья дивергенция = медвежий сигнал» или «сброс дивергенции» в книге нет — не приписывать его книге.
+"""
+reviewed = true
+# evidence: 10 Oscillators and Contrary Opinion › THE RELATIVE STRENGTH INDEX (RSI) › Interpreting RSI — "If the oscillator moves in the opposite direction, breaking a previous high or low, then a divergence or failure swing is confirmed."
+# evidence: 10 Oscillators and Contrary Opinion › THE IMPORTANCE OF TREND — "The danger in placing too much importance on oscillators by themselves is the temptation to use divergence as an excuse to initiate trades contrary to the general trend."
+# source: backend/src/mastra/skills/analysisSkills.ts:847 — неотработавшая бычья дивергенция = сигнал продолжения падения
+# theme: дивергенции
+# note: Could also be 'partial': the book has no explicit rule on failed divergences; it answers via confirmation rules and trend primacy.
+# Part 3 of the golden-set draft: questions n=31..44 (murphy-ta). Draft labels — every one needs human verification.
+# review (independent trader review, 2026-10-31): fix, confidence medium — Тезис «подтверждаются ТОЛЬКО пробоем предыдущего пика RSI; без этого сигнала нет» противоречит книге. В разделе USING THE 70 AND 30 LINES подтверждением дивергенции или двойного дна в зоне перепроданности многие трейдеры считают возврат выше 30. Формулировка смягчена, раздел добавлен.
+# review added: 10 Oscillators and Contrary Opinion › USING THE 70 AND 30 LINES TO GENERATE SIGNALS
+
+[[questions]]
+id = "q31-rsi-divergence-vs-oversold"
+kind = "factual"
+question = "Чем дивергенция RSI отличается от обычной перепроданности? Если RSI упал ниже 30, а цена у поддержки — это уже дивергенция или просто экстремум RSI?"
+relevant = [
+    { book = "murphy-ta", path = "10 Oscillators and Contrary Opinion › THE RELATIVE STRENGTH INDEX (RSI) › Interpreting RSI" },
+]
+expected = """
+Перепроданность — это просто экстремальное значение: RSI ниже 30 (в медвежьем рынке уровнем перепроданности часто становится 20); это лишь предупреждение, а не сигнал.
+Дивергенция — это расхождение с ценой: цена обновляет минимум, а RSI при повторном заходе в зону ниже 30 его не подтверждает (второй минимум RSI выше первого); подтверждается, когда RSI пробивает свой предыдущий пик (bottom failure swing).
+Поэтому одно падение RSI ниже 30 у поддержки — это экстремум, а не дивергенция: первый заход в зону — только предупреждение, внимание нужно ко второму.
+Дивергенция при RSI ниже 30 или выше 70 — серьёзное предупреждение (Уайлдер считал её самой показательной чертой RSI); в сильном тренде рынок может долго оставаться перепроданным или перекупленным.
+"""
+reviewed = true
+# evidence: 10 Oscillators and Contrary Opinion › THE RELATIVE STRENGTH INDEX (RSI) › Interpreting RSI — "If the second move fails to confirm the price move into new highs or new lows (forming a double top or bottom on the oscillator), a possible divergence exists."
+# source: backend/src/mastra/skills/proofSkills.ts:55 — бустер mean-reversion по экстремуму RSI; рядом (стр. 52) комментарий об отдельном бустере RSI-дивергенции, который всегда даёт 0
+# theme: дивергенции
+# note: все ключевые пункты в одном подразделе; соседние «USING THE 70 AND 30 LINES TO GENERATE SIGNALS» и «The Three Most Important Uses for the Oscillator» — допустимое дополнение, не обязательное
+# review (independent trader review, 2026-10-31): ok, confidence high — Тезисы точно передают раздел Interpreting RSI: экстремум — предупреждение, первый заход в зону ничего не подтверждает, дивергенция требует второго захода без подтверждения нового минимума, а подтверждение даёт пробой пика RSI. Тип factual верен.
+
+[[questions]]
+id = "q32-patterns-on-scalp-timeframes"
+kind = "multi"
+question = "я торгую скальп на 1-5 минутках — голова-плечи, треугольники и клинья там вообще работают или это просто шум?"
+relevant = [
+    { book = "murphy-ta", path = "1 Philosophy of Technical Analysis › TECHNICAL ANALYSIS APPLIED TO DIFFERENT TIME DIMENSIONS" },
+    { book = "murphy-ta", path = "5 Major Reversal Patterns › TWO TYPES OF PATTERNS: REVERSAL AND CONTINUATION › Preliminary Points Common to All Reversal Patterns" },
+    { book = "murphy-ta", path = "16 Money Management and Trading Tactics › FROM DAILY CHARTS TO INTRADAY PRICE CHARTS" },
+    { book = "murphy-ta", path = "8 Long Term Charts › LONG TERM TRENDS DISPUTE RANDOMNESS" },
+    { book = "murphy-ta", path = "1 Philosophy of Technical Analysis › RANDOM WALK THEORY" },
+]
+expected = """
+Мёрфи: одни и те же принципы технического анализа применимы к любому таймфрейму — от внутридневной торговли «тик за тиком» до долгосрочного анализа; на очень чувствительных внутридневных графиках (в книге есть пример 5-минутного) эти принципы хорошо видны.
+Значимость фигуры зависит от её размера: чем шире размах колебаний внутри неё и чем дольше она формируется, тем она важнее и тем больше потенциал последующего движения — мелкие короткие фигуры весят меньше.
+Про шум: некоторая случайность («шум») есть на всех рынках, но не всё движение случайно; та случайность, что есть, — по Мёрфи, скорее всего явление очень короткого срока.
+Анализ нужно начинать со старших графиков (месячные, недельные, дневной), а внутридневные использовать последними — для точного входа и выхода.
+Отдельной оценки надёжности голов-плеч, треугольников и клиньев именно на 1–5-минутках в книге нет — нельзя выдумывать статистику.
+"""
+reviewed = true
+# evidence: 1 Philosophy of Technical Analysis › TECHNICAL ANALYSIS APPLIED TO DIFFERENT TIME DIMENSIONS — "Whether the user is trading the intraday tic-by-tic changes for *day trading purposes* or *trend trading* the intermediate trend, the same principles apply."
+# evidence: 5 Major Reversal Patterns › TWO TYPES OF PATTERNS: REVERSAL AND CONTINUATION › Preliminary Points Common to All Reversal Patterns — "The greater the size of the pattern—that is, the wider the price swings within the pattern (the volatility) and the longer it takes to build—the more important the pattern becomes"
+# evidence: 16 Money Management and Trading Tactics › FROM DAILY CHARTS TO INTRADAY PRICE CHARTS — "The technical principles already discussed are clearly visible on these very sensitive charts."
+# source: backend/src/mastra/prompts/analysisPrompt.ts:69 — правило пропуска графических фигур для scalp: на 1m-5m они ненадёжны
+# theme: фигуры
+# note: можно было бы считать partial: прямого ответа про надёжность фигур на 1–5m в книге нет, есть только общие принципы; выбрал multi, т.к. нет отдельной «некнижной» части (крипта/текущие данные)
+# review (independent trader review, 2026-10-31): fix, confidence high — Ключ утверждает, что вывода про шум в книге нет. Но в гл. 8 прямо сказано, что случайность в ценах — «probably a phenomenon of the very short term», а в гл. 1 — что шум есть на всех рынках, но не всё движение случайно. Это ответ на вторую половину вопроса, а разделы пропущены.
+# review added: 8 Long Term Charts › LONG TERM TRENDS DISPUTE RANDOMNESS; 1 Philosophy of Technical Analysis › RANDOM WALK THEORY
+
+[[questions]]
+id = "q33-golden-cross-50-200"
+kind = "multi"
+question = "что такое золотой крест EMA50 и EMA200 и правда ли это сильный долгосрочный бычий сигнал? он же запаздывает"
+relevant = [
+    { book = "murphy-ta", path = "9 Moving Averages › THE MOVING AVERAGE: A SMOOTHING DEVICE WITH A TIME LAG" },
+    { book = "murphy-ta", path = "9 Moving Averages › The Use of One Moving Average › How to Use Two Averages to Generate Signals" },
+    { book = "murphy-ta", path = "9 Moving Averages › SUMMARY" },
+    { book = "murphy-ta", path = "9 Moving Averages › MOVING AVERAGES APPLIED TO LONG TERM CHARTS" },
+    { book = "murphy-ta", path = "1 Philosophy of Technical Analysis › A BRIEF COMPARISON OF TECHNICAL ANALYSIS IN STOCKS AND FUTURES › Time Frame Is Much Shorter" },
+]
+expected = """
+Термина «золотой крест» в книге нет, но описан метод двойного пересечения: сигнал на покупку — когда более короткая средняя пересекает более длинную снизу вверх (примеры 5/20 и 10/50 дней).
+У акций чаще всего смотрят 50- и 200-дневную средние; их недельный аналог — 10- и 40-недельная средние, которые по книге помогают отслеживать первичный (долгосрочный) тренд на недельных графиках (40-недельная должна давать поддержку в коррекциях бычьего рынка).
+Скользящая средняя — трендследящий инструмент: «следует, а не ведёт», сообщает о тренде только после факта; чем длиннее средняя, тем она менее чувствительна и тем больше запаздывание; две средние запаздывают чуть больше одной, но дают меньше ложных сигналов (whipsaws).
+Средние хорошо работают в трендах и очень плохо — в боковике (треть–половина времени); доказательств, что экспоненциальные средние лучше простых, по Мёрфи, нет. Отдельной оценки «сильный сигнал» именно для пересечения EMA50/EMA200 в книге нет.
+"""
+reviewed = true
+# evidence: 9 Moving Averages › THE MOVING AVERAGE: A SMOOTHING DEVICE WITH A TIME LAG — "The moving average is a follower, not a leader. It never anticipates; it only reacts."
+# evidence: 9 Moving Averages › The Use of One Moving Average › How to Use Two Averages to Generate Signals — "This technique of using two averages together lags the market a bit more than the use of a single average but produces fewer whipsaws."
+# evidence: 9 Moving Averages › SUMMARY — "For longer range stock market analysis, popular weekly moving averages are 30 and 40 weeks (or 200 days)."
+# source: backend/src/mastra/skills/analysisSkills.ts:56 — правило Golden Cross / Death Cross по EMA50/EMA200
+# theme: скользящие средние
+# note: «golden cross» как термин в книге отсутствует, концепция — да; родительский раздел «The Use of One Moving Average» (длинная средняя медленнее, но надёжнее) тоже подходит вместо подраздела про две средние
+# review (independent trader review, 2026-10-31): fix, confidence high — Пропущены два прямых места: «The most commonly watched averages in stocks are 50 and 200 days» (гл. 1) и абзац о 10- и 40-недельных средних (≈50/200 дней), которые «help track the primary trend» (родительский раздел MOVING AVERAGES APPLIED TO LONG TERM CHARTS). Это ближайший книжный ответ на «долгосрочный ли это сигнал». Родительский раздел включает подраздел Pros and Cons, поэтому подраздел заменён на родителя.
+# review added: 9 Moving Averages › MOVING AVERAGES APPLIED TO LONG TERM CHARTS; 1 Philosophy of Technical Analysis › A BRIEF COMPARISON OF TECHNICAL ANALYSIS IN STOCKS AND FUTURES › Time Frame Is Much Shorter
+# review removed: 9 Moving Averages › MOVING AVERAGES APPLIED TO LONG TERM CHARTS › Some Pros and Cons of the Moving Average
+
+[[questions]]
+id = "q34-bollinger-squeeze"
+kind = "multi"
+question = "Что такое сжатие полос Боллинджера и почему после него ждут сильный выход, хотя непонятно в какую сторону?"
+relevant = [
+    { book = "murphy-ta", path = "9 Moving Averages › BAND WIDTH MEASURES VOLATILITY" },
+    { book = "murphy-ta", path = "9 Moving Averages › BOLLINGER BANDS" },
+]
+expected = """
+Полосы Боллинджера — две линии на расстоянии двух стандартных отклонений от средней (обычно 20-дневной); стандартное отклонение показывает разброс цен, поэтому, в отличие от конвертов постоянной ширины, полосы расширяются и сужаются вместе с волатильностью последних 20 дней: при низкой волатильности они сходятся — это и есть «сжатие».
+Полосы склонны чередовать расширение и сужение.
+Слишком сузившиеся полосы часто означают, что рынок может вот-вот начать новый тренд; необычно широкие — что текущий тренд, возможно, заканчивается.
+Как по сужению определить направление выхода, в книге не сказано (Мёрфи лишь отмечает, что полосы лучше работают в сочетании с осцилляторами перекупленности/перепроданности). Термина «squeeze» в книге нет.
+"""
+reviewed = true
+# evidence: 9 Moving Averages › BAND WIDTH MEASURES VOLATILITY — "When the distance between the two bands has narrowed too far, that is often a sign that a market may be about to initiate a new trend."
+# source: backend/src/mastra/skills/scenariosSkills.ts:35 — сжатие полос Боллинджера: ожидается пробойный сценарий на выходе из канала
+# theme: волатильность
+# note: определение самих полос (2 стандартных отклонения от 20-дневной средней) — в соседнем «9 Moving Averages › BOLLINGER BANDS»; если рецензент считает его обязательным для «что такое», kind станет multi
+# review (independent trader review, 2026-10-31): fix, confidence medium — Чтобы ответить «что такое сжатие», нужно определение самих полос: ±2 стандартных отклонения вокруг 20-дневной средней, отсюда связь ширины с волатильностью. Оно в отдельном разделе BOLLINGER BANDS, которого нет в ключе. С ним вопрос опирается на 2 раздела, поэтому тип multi.
+# review added: 9 Moving Averages › BOLLINGER BANDS
+
+[[questions]]
+id = "q35-higher-timeframe-trend-filter"
+kind = "multi"
+question = "на моём таймфрейме всё выглядит как лонг, а на дневке цена под EMA200. почему это называют ловушкой — зачем смотреть старший таймфрейм перед входом?"
+relevant = [
+    { book = "murphy-ta", path = "8 Long Term Charts › LONG TERM TO SHORT TERM CHARTS" },
+    { book = "murphy-ta", path = "10 Oscillators and Contrary Opinion › COMBINE WEEKLIES AND DAILIES" },
+    { book = "murphy-ta", path = "10 Oscillators and Contrary Opinion › THE IMPORTANCE OF TREND" },
+    { book = "murphy-ta", path = "9 Moving Averages › MOVING AVERAGES APPLIED TO LONG TERM CHARTS" },
+    { book = "murphy-ta", path = "9 Moving Averages › SUMMARY" },
+]
+expected = """
+Мёрфи: анализ нужно вести от долгосрочного к краткосрочному (месячный → недельный → дневной → внутридневной); кто начинает только с краткосрочной картины, вынужден постоянно пересматривать выводы, а анализ дневного графика может полностью измениться после взгляда на долгосрочный.
+Сигналы старшего графика важнее (у Мёрфи — недельные важнее дневных): по ним определяют направление рынка, а младший используют для точного входа/выхода; сигнал младшего принимают, только если он согласуется со старшим — это фильтр, не дающий торговать против преобладающего тренда.
+Важность торговли по направлению основного тренда «невозможно переоценить»; попытки открывать сделки против общего тренда (например, по дивергенции осциллятора) обычно оборачиваются дорогими и болезненными.
+Про 200-дневную среднюю: у Мёрфи 40-недельная (≈200-дневная) средняя — популярная долгосрочная средняя, которая помогает отслеживать первичный тренд (в бычьем рынке служит поддержкой на коррекциях). Отдельного правила «цена под EMA200 на дневке = ловушка» в книге нет — это следствие общего принципа торговать по старшему тренду.
+"""
+reviewed = true
+# evidence: 8 Long Term Charts › LONG TERM TO SHORT TERM CHARTS — "If the analyst begins with only the near term picture, he or she is forced to constantly revise conclusions as more price data is considered."
+# evidence: 10 Oscillators and Contrary Opinion › COMBINE WEEKLIES AND DAILIES — "the weekly signals become trend filters for daily signals. That prevents using daily signals to trade against the prevailing trend."
+# evidence: 10 Oscillators and Contrary Opinion › THE IMPORTANCE OF TREND — "The importance of trading in the direction of the major trend cannot be overstated."
+# source: backend/src/mastra/skills/analysisSkills.ts:81 — предупреждение о торговле против макротренда, когда на старшем ТФ цена под EMA200
+# theme: мультитаймфрейм
+# note: «16 … › FROM DAILY CHARTS TO INTRADAY PRICE CHARTS» говорит то же самое (начинать с долгосрочного взгляда) — тоже допустимый раздел; не включил, чтобы не дублировать
+# review (independent trader review, 2026-10-31): fix, confidence medium — Тезис «правила про EMA200 в книге нет» неполон: в гл. 9 Мёрфи прямо называет 40-недельную (=200-дневную) среднюю долгосрочной и пишет, что 10- и 40-недельные средние отслеживают первичный тренд. Вопрос прямо про цену под 200-й средней, поэтому эти разделы нужны.
+# review added: 9 Moving Averages › MOVING AVERAGES APPLIED TO LONG TERM CHARTS; 9 Moving Averages › SUMMARY
+
+[[questions]]
+id = "q36-stop-behind-structure"
+kind = "multi"
+question = "Почему стоп в сценарии стоит за ближайшим структурным минимумом, да ещё с запасом по ATR, а не просто фиксированные 1-2% от входа? Что это даёт?"
+relevant = [
+    { book = "murphy-ta", path = "16 Money Management and Trading Tactics › MONEY MANAGEMENT › Using Protective Stops" },
+    { book = "murphy-ta", path = "16 Money Management and Trading Tactics › COMBINING TECHNICAL FACTORS AND MONEY MANAGEMENT" },
+    { book = "murphy-ta", path = "16 Money Management and Trading Tactics › TRADING TACTICS › Using Support and Resistance" },
+]
+expected = """
+Мёрфи: место стопа — это сочетание технических факторов графика и правил управления капиталом; некоторые ставят стоп только по денежному расчёту, но критически важно ставить его ниже валидной поддержки для лонга (выше валидного сопротивления для шорта).
+Поддержка и сопротивление — самые ценные ориентиры для защитных стопов: стоп под ближайшей поддержкой или чуть ниже точки пробоя.
+Нужно учитывать волатильность: чем волатильнее рынок, тем шире стоп; слишком близкий стоп выбивает краткосрочным «шумом», слишком далёкий даёт большие убытки.
+Размер позиции подстраивают под стоп: ближе стоп — можно больше позиция, дальше — позиция меньше (риск на сделку ограничен, например 5% капитала).
+Отступ именно «по ATR» для стопов в книге не описан (ATR упоминается только в приложении о полосах STARC и каналах Keltner).
+"""
+reviewed = true
+# evidence: 16 Money Management and Trading Tactics › MONEY MANAGEMENT › Using Protective Stops — "The trader must consider the volatility of the market. The more volatile the market is, the looser the stop that must be employed."
+# evidence: 16 Money Management and Trading Tactics › COMBINING TECHNICAL FACTORS AND MONEY MANAGEMENT — "It’s critically important, however, that the protective stop be placed over a *valid* resistance point for a short position or below a *valid* support point for a long position."
+# evidence: 16 Money Management and Trading Tactics › TRADING TACTICS › Using Support and Resistance — "Protective stops can then be placed under the nearest support point. A closer protective stop could be placed just below the actual breakout point, which should now function as support."
+# source: backend/src/mastra/prompts/scenarioPrompt.ts:302 — правило инвалидации: стоп за структурным уровнем плюс отступ ATR, а не фиксированная дистанция
+# theme: стоп-лоссы
+# note: ATR-часть книга покрывает только принципом «учитывать волатильность»; можно рассматривать и как partial
+# review (independent trader review, 2026-10-31): ok, confidence high — Тезисы подтверждаются разделами гл. 16: стоп за валидной поддержкой/сопротивлением, волатильность и «шум», размер позиции от стопа, лимит 5%. Утверждение про ATR проверено: он есть только в приложении A (STARC/Keltner).
+
+[[questions]]
+id = "q37-limit-vs-close-entry"
+kind = "multi"
+question = "В сценарии советуют лимитку прямо на уровне, а не вход по закрытию свечи над ним. Разве вход по подтверждению не надёжнее? Как проскальзывание после закрытия свечи меняет мой риск/прибыль?"
+relevant = [
+    { book = "murphy-ta", path = "16 Money Management and Trading Tactics › TRADING TACTICS › Tactics on Breakouts: Anticipation or Reaction?" },
+    { book = "murphy-ta", path = "16 Money Management and Trading Tactics › TYPES OF TRADING ORDERS" },
+    { book = "murphy-ta", path = "16 Money Management and Trading Tactics › REWARD TO RISK RATIOS" },
+]
+expected = """
+Мёрфи описывает выбор: войти заранее (в ожидании пробоя) — лучшая цена, но выше шанс плохой сделки; ждать подтверждённого пробоя — выше шансы на успех, но вход позже и по худшей цене; ждать отката после пробоя — компромисс, но откат может не случиться. Решение — торговать несколькими частями позиции.
+Лимитный ордер даёт контроль и лучшую цену (например, купить откат ближе к поддержке после пробоя), но рискует не исполниться; рыночный гарантирует вход, но может означать «погоню» за ценой; стоп-ордер становится рыночным, и исполнение может быть хуже цены стопа, особенно на быстром рынке.
+Соотношение прибыль/риск: потенциальную прибыль (цель) сравнивают с возможным убытком; распространённый ориентир — не менее 3 к 1.
+Прямого разбора того, как проскальзывание после закрытия свечи меняет RR, в книге нет.
+"""
+reviewed = true
+# evidence: 16 Money Management and Trading Tactics › TRADING TACTICS › Tactics on Breakouts: Anticipation or Reaction? — "Waiting for the actual breakout increases the odds of success, but the penalty is a later (higher) entry price."
+# evidence: 16 Money Management and Trading Tactics › TYPES OF TRADING ORDERS — "Market orders guarantee a position, but may result in “chasing” the market. Limit orders provide more control and better prices, but risk missing the market."
+# evidence: 16 Money Management and Trading Tactics › REWARD TO RISK RATIOS — "That profit objective (the reward) is then balanced against the potential loss if the trade goes wrong (the risk)."
+# source: backend/src/mastra/prompts/scenarioPrompt.ts:542 — предпочтение лимитных входов: вход по закрытию свечи даёт проскальзывание и портит RR
+# theme: соотношение риска и прибыли
+# note: связь «проскальзывание → хуже RR» в книге только косвенная (поздний вход = худшая цена; bad fills у стоп-ордеров)
+# review (independent trader review, 2026-10-31): ok, confidence medium — Компромисс «заранее / на пробое / на откате», плюсы и минусы лимитных, рыночных и стоп-ордеров (исполнение хуже цены стопа), RR 3:1 — всё есть в указанных разделах. Оговорка, что прямого расчёта влияния проскальзывания на RR нет, корректна.
+
+[[questions]]
+id = "q38-fractional-kelly"
+kind = "partial"
+question = "What is fractional Kelly sizing and why would an app size my trade with it instead of just risking a fixed 1% per trade?"
+relevant = [
+    { book = "murphy-ta", path = "16 Money Management and Trading Tactics › MONEY MANAGEMENT › Some General Money Management Guidelines" },
+    { book = "murphy-ta", path = "16 Money Management and Trading Tactics › COMBINING TECHNICAL FACTORS AND MONEY MANAGEMENT" },
+    { book = "murphy-ta", path = "16 Money Management and Trading Tactics › WHAT TO DO AFTER PERIODS OF SUCCESS AND ADVERSITY" },
+]
+expected = """
+Из книги: Мёрфи даёт простые правила управления капиталом (в основном для фьючерсов): риск в одном рынке — не более 5% капитала, вложения в один рынок — 10–15%, всего в рынках — не более 50% капитала, на группу рынков — 20–25% маржи; сам он подаёт тему «на относительно простом уровне», отмечая, что управление портфелем может требовать сложной статистики.
+Из книги: размер позиции связан с расстоянием до стопа — ближе стоп позволяет большую позицию, дальше стоп — меньшую, так чтобы общий риск не превышал лимит.
+Из книги: о том, как менять размер позиций вместе с капиталом: хуже всего увеличивать объём после серии выигрышей (удвоив позиции после удвоения счёта, в неизбежной полосе убытков можно отдать всё); разумнее наращивать объём после просадки капитала.
+Нет в книгах (честно сказать): критерий Келли и «дробный Келли», его сравнение с фиксированным риском 1% на сделку и то, по какой логике конкретное приложение рассчитывает размер позиции.
+"""
+reviewed = true
+# evidence: 16 Money Management and Trading Tactics › MONEY MANAGEMENT › Some General Money Management Guidelines — "The total amount risked in any one market should be limited to 5% of total equity."
+# evidence: 16 Money Management and Trading Tactics › COMBINING TECHNICAL FACTORS AND MONEY MANAGEMENT — "A closer protective stop would permit the taking of larger positions. A looser stop would reduce the size of the position."
+# source: backend/src/mastra/skills/scenariosSkills.ts:472 — расчёт размера позиции: дробный Келли × поправка на уверенность × волатильность
+# theme: размер позиции
+# note: можно считать и unanswerable: про Келли в книге ничего нет; оставил partial, т.к. книга даёт базовую альтернативу — фиксированный лимит риска и размер позиции от стопа
+# review (independent trader review, 2026-10-31): fix, confidence medium — Тип и отказ про Келли верны (по книге поиск «Kelly/optimal f/fixed fractional» пуст), но пропущен раздел, где Мёрфи прямо обсуждает, как менять размер позиций при росте и падении капитала. Для вопроса о методе расчёта размера сделки это главный материал книги.
+# review added: 16 Money Management and Trading Tactics › WHAT TO DO AFTER PERIODS OF SUCCESS AND ADVERSITY
+
+[[questions]]
+id = "q39-correlated-positions"
+kind = "partial"
+question = "Если у меня одновременно лонги по BTC, ETH и SOL — это три отдельных риска или по сути одна большая позиция? Как корреляция влияет на то, сколько сделок можно держать сразу?"
+relevant = [
+    { book = "murphy-ta", path = "16 Money Management and Trading Tactics › MONEY MANAGEMENT › Diversification Versus Concentration" },
+    { book = "murphy-ta", path = "16 Money Management and Trading Tactics › MONEY MANAGEMENT › Some General Money Management Guidelines" },
+]
+expected = """
+Из книги: позиции в рынках, которые обычно движутся в одном направлении, — это не диверсификация (пример Мёрфи — лонги сразу в четырёх валютах против доллара); чем отрицательнее корреляция между рынками, тем больше диверсификация.
+Из книги: рынки одной группы движутся вместе (золото и серебро), поэтому совокупную маржу на группу ограничивают 20–25% капитала при риске в одном рынке не более 5%; полные позиции в каждом рынке группы сводят диверсификацию на нет.
+Из книги: диверсификацию тоже можно переборщить — слишком много одновременных позиций размывает прибыль от немногих удачных сделок.
+Нет в книгах (честно сказать): криптовалюты, фактическая корреляция BTC/ETH/SOL и конкретный лимит числа одновременных позиций для них.
+"""
+reviewed = true
+# evidence: 16 Money Management and Trading Tactics › MONEY MANAGEMENT › Diversification Versus Concentration — "Holding long positions in four foreign currency markets at the same time would not be a good example of diversification, since foreign currencies usually trend in the same direction"
+# evidence: 16 Money Management and Trading Tactics › MONEY MANAGEMENT › Some General Money Management Guidelines — "Putting on full positions in each market in the same group would frustrate the principle of diversification."
+# source: backend/src/agent/Readme.md:85 — скользящие корреляции и лимит на одновременные позиции
+# theme: размер позиции
+# note: «17 … › INTERMARKET CORRELATION» объясняет измерение корреляции, но для анализа, а не для риска позиций — не включал
+# review (independent trader review, 2026-10-31): ok, confidence high — Тезисы точно передают разделы о диверсификации (валюты против доллара, отрицательная корреляция) и групповом лимите 20–25% (золото и серебро). Отказ про крипту корректен.
+
+[[questions]]
+id = "q40-oi-falling-price-rising"
+kind = "partial"
+question = "цена растёт, а открытый интерес по биржам за сутки падает. насколько надёжен такой рост по сравнению с ростом, когда OI растёт вместе с ценой? и как это выглядит по BTC прямо сейчас?"
+relevant = [
+    { book = "murphy-ta", path = "7 Volume and Open Interest › INTERPRETATION OF OPEN INTEREST IN FUTURES" },
+    { book = "murphy-ta", path = "7 Volume and Open Interest › BLOWOFFS AND SELLING CLIMAXES" },
+]
+expected = """
+Из книги: рост цены при росте открытого интереса означает приток новых денег (агрессивные новые покупки) и считается бычьим — тренд подтверждён; в сильном тренде OI идёт вместе с ценой.
+Из книги: рост цены при падении OI вызван в основном закрытием шортов (short covering), деньги уходят из рынка; это считается медвежьим — подъём, вероятно, выдохнется, когда покрытие шортов завершится.
+Из книги: если после долгого роста OI выравнивается или снижается, это часто ранний сигнал смены тренда; резкий финальный рывок цены на большом объёме при падающем OI характерен для вершины-«blowoff».
+Из книги: в самом начале нового тренда OI иногда слегка проседает, поэтому Мёрфи не советует придавать слишком большое значение очень краткосрочным изменениям OI.
+Нет в книгах (честно сказать): текущие данные по BTC и по открытому интересу на криптобиржах; книга говорит о фьючерсах в целом (1999).
+"""
+reviewed = true
+# evidence: 7 Volume and Open Interest › INTERPRETATION OF OPEN INTEREST IN FUTURES — "This action is considered bearish because the uptrend will probably run out of steam once the necessary short covering has been completed."
+# source: backend/src/mastra/prompts/analysisPrompt.ts:387 — чтение OI вместе с ценой: рост цены при падении OI = шорт-сквиз, «пустое» ралли
+# theme: деривативы (funding, OI, ликвидации)
+# note: родительский раздел покрывает и подраздел «Other Situations…» (про краткосрочный провал OI в начале тренда)
+# review (independent trader review, 2026-10-31): fix, confidence medium — Пропущен раздел BLOWOFFS: Мёрфи прямо пишет, что blowoff-вершина во фьючерсах часто идёт с падением OI на финальном ралли. Это ровно сценарий «цена растёт, OI падает». Из указанного раздела не взят и п. 1 «Other Situations»: выравнивание или снижение OI в конце движения — ранний сигнал смены тренда.
+# review added: 7 Volume and Open Interest › BLOWOFFS AND SELLING CLIMAXES
+
+[[questions]]
+id = "q41-oi-leverage-funding"
+kind = "partial"
+question = "Открытый интерес по BTC на биржах сейчас сильно больше суточного объёма — значит, рынок перегружен плечом и может посыпаться каскадом ликвидаций? И как понять, что текущий funding высокий относительно своей истории?"
+relevant = [
+    { book = "murphy-ta", path = "7 Volume and Open Interest › INTERPRETATION OF OPEN INTEREST IN FUTURES › Other Situations Where Open Interest Is Important" },
+    { book = "murphy-ta", path = "10 Oscillators and Contrary Opinion › THE PRINCIPLE OF CONTRARY OPINION IN FUTURES › The Importance of Open Interest (Futures)" },
+]
+expected = """
+Из книги: высокий открытый интерес на вершине рынка опасен, если цена резко падает: все новые лонги оказываются в убытке, их вынужденная ликвидация давит на цену, «подпитывает сама себя» и вызывает маржинальные продажи других лонгов; необычно высокий OI в бычьем рынке — сигнал опасности.
+Из книги: чем больше трейдеров оказалось не на той стороне (высокий OI), тем резче реакция на внезапное движение против них.
+Из книги: но сам по себе высокий OI — ещё не сигнал разворота: пока OI продолжает расти, тренд скорее продолжится; Мёрфи советует занимать позицию против толпы, лишь когда OI выровняется или начнёт снижаться (после долгого роста это часто ранний сигнал смены тренда).
+Нет в книгах (честно сказать): соотношение OI к суточному объёму как мера «перегруженности плечом», ставки финансирования (funding) и их сравнение с историей (перцентили), текущие данные по BTC на криптобиржах.
+"""
+reviewed = true
+# evidence: 7 Volume and Open Interest › INTERPRETATION OF OPEN INTEREST IN FUTURES › Other Situations Where Open Interest Is Important — "their forced selling often begins to feed on itself and, as prices are pushed even lower, causes additional margin selling by other longs"
+# source: backend/src/mastra/prompts/proofPrompt.ts:147 — контекст деривативов: перцентиль funding >0.85 и OI/объём >0.7 как признак перегруженности плечом
+# theme: деривативы (funding, OI, ликвидации)
+# review (independent trader review, 2026-10-31): fix, confidence medium — Пользователь делает вывод «OI высокий — значит посыплется». В тезисах нет оговорки Мёрфи, что рост OI повышает шансы продолжения тренда и действовать против рынка стоит только после того, как OI выровняется или пойдёт вниз (гл. 10, Contrary Opinion; п. 1 «Other Situations»). Без неё ответ получится односторонним.
+# review added: 10 Oscillators and Contrary Opinion › THE PRINCIPLE OF CONTRARY OPINION IN FUTURES › The Importance of Open Interest (Futures)
+
+[[questions]]
+id = "q42-liquidation-heatmap"
+kind = "unanswerable"
+question = "Чем карта уже случившихся ликвидаций отличается от liquidation heatmap, где рисуют будущие уровни ликвидаций? Можно ли брать цену с хитмапа как точный уровень для входа или стопа?"
+relevant = []
+expected = """
+Честный отказ: в книгах нет ни карт уже случившихся ликвидаций, ни liquidation heatmap с модельными уровнями будущих ликвидаций — это инструменты криптодеривативов, появившиеся позже.
+Поэтому по книгам нельзя ни сравнить эти карты, ни оценить, насколько точны уровни с хитмапа для входа или стопа. Без выдуманных уровней и цифр.
+"""
+reviewed = true
+# source: backend/src/mastra/prompts/proofPrompt.ts:157 — исторические кластеры ликвидаций (уже сработали) против модельного хитмапа будущих ликвидаций
+# theme: деривативы (funding, OI, ликвидации)
+# note: книга говорит о вынужденной ликвидации позиций только в общем виде (открытый интерес, гл. 7) — на сам вопрос это не отвечает
+# review (independent trader review, 2026-10-31): ok, confidence high — В книге нет ни карт ликвидаций, ни heatmap: поиск дал только «forced liquidation» в контексте OI фьючерсов, это не про сами инструменты. Отказ корректен.
+
+[[questions]]
+id = "q43-order-block-vs-order-book"
+kind = "unanswerable"
+question = "is an order block the same thing as the order book? the analysis uses OB for both and i'm confused which one is a chart zone and which one is live bids/asks"
+relevant = []
+expected = """
+Честный отказ: в книге Мёрфи нет понятия «order block» (из Smart Money Concepts) и нет биржевого стакана заявок (live bids/asks), а также объяснения, что означает сокращение OB в конкретном приложении.
+Нельзя выдумывать определения от имени книги.
+"""
+reviewed = true
+# source: backend/src/mastra/prompts/analysisPrompt.ts:606 — ордер-блоки как SMC-сигнал из price action, а не из стакана (в том же промпте OB означает и стакан, стр. 500)
+# theme: стакан и ликвидность
+# note: вопрос ещё и про внутреннюю терминологию приложения — по правилам unanswerable
+# review (independent trader review, 2026-10-31): ok, confidence high — Поиск по «order book/bid/ask/order block» ничего не дал; понятий order block и биржевого стакана в книге нет. Отказ корректен.
+
+[[questions]]
+id = "q44-thin-order-book"
+kind = "partial"
+question = "Что такое «тонкий стакан» и почему из-за него тень может пройти сквозь уровень, а мой вход проскользнёт?"
+relevant = [
+    { book = "murphy-ta", path = "16 Money Management and Trading Tactics › TYPES OF TRADING ORDERS" },
+    { book = "murphy-ta", path = "4 Basic Concepts of Trend › TRENDLINES › What Constitutes a Valid Breaking of a Trendline?" },
+]
+expected = """
+Из книги: стоп-ордер при срабатывании становится рыночным, поэтому фактическая цена исполнения может оказаться за ценой стопа, особенно на быстром рынке; вход по buy/sell stop может давать плохие исполнения, а лимитный ордер даёт контроль цены, но может не исполниться.
+Из книги: внутридневной прокол уровня менее значим, чем закрытие за ним; для отсева ложных пробоев используют фильтры (закрытие, 1–3%, правило двух дней), в том числе для уровней поддержки и сопротивления.
+Нет в книгах (честно сказать): понятие биржевого стакана и «тонкого стакана» (малой глубины заявок у цены) и механика того, как малая глубина пропускает тень сквозь уровень и усиливает проскальзывание.
+"""
+reviewed = true
+# evidence: 16 Money Management and Trading Tactics › TYPES OF TRADING ORDERS — "Since the stop order becomes a market order, the actual “fill” price may be beyond the stop price, especially in a fast market."
+# evidence: 4 Basic Concepts of Trend › TRENDLINES › What Constitutes a Valid Breaking of a Trendline? — "a close beyond the trendline is more significant than just an intraday penetration."
+# source: backend/src/mastra/skills/scenariosSkills.ts:237 — флаг тонкого стакана: мало глубины у цены
+# theme: стакан и ликвидность
+# note: второй раздел объясняет только «тень сквозь уровень ≠ пробой», а не причину; близкое по смыслу — совет торговать самыми ликвидными контрактами (3 … › FUTURES OPEN INTEREST › The Value of Individual Volume and Open Interest Numbers in Futures), не включал
+# review (independent trader review, 2026-10-31): ok, confidence high — Исполнение стоп-ордера хуже цены стопа на быстром рынке, плохие исполнения при входе по stop, внутридневной прокол против закрытия и фильтры — всё есть в тексте. Стакана и «тонкого стакана» в книге нет: «liquidity» встречается лишь про истечение фьючерсных контрактов (прил. D).
+
+[[questions]]
+id = "q45-weekend-lunch-volume"
+kind = "partial"
+question = "Почему сетапы в выходные и в обед по Нью-Йорку считаются хуже? Это потому что объём падает и цену легче протолкнуть через уровень?"
+relevant = [
+    { book = "murphy-ta", path = "7 Volume and Open Interest › INTERPRETATION OF VOLUME FOR ALL MARKETS" },
+]
+expected = """
+Из книги: объём измеряет интенсивность (давление) за ценовым движением и должен расти в направлении тренда.
+Из книги: пробой уровня/фигуры должен сопровождаться ростом объёма, если сигнал настоящий; обновление максимума на падающем объёме — дивергенция, ослабление давления покупателей.
+Нет в книгах (честно сказать): торговые сессии, выходные, обед по Нью-Йорку и ликвидность по времени суток книга не разбирает; тезис «на тонком рынке цену легче протолкнуть через уровень» в книге не обоснован.
+"""
+reviewed = true
+# evidence: 7 Volume and Open Interest › INTERPRETATION OF VOLUME FOR ALL MARKETS — "As a rule, the resolution of all price patterns (the breakout point) should be accompanied by heavier trading activity if the signal given by that breakout is real."
+# source: backend/src/agent/Readme.md:82 — штраф окон низкой ликвидности по UTC: хвост выходных, перед открытием NYSE, обед NY
+# theme: сессии и время
+# note: quote is in the subsection "Volume as Confirmation in Price Patterns" (covered by the parent). The only time-of-day text in the book is THE USE OF INTRADAY PIVOT POINTS (midday ~12:30 NY as a checkpoint, "the later in the day the signal is given, the stronger it is") — it does not say midday setups are worse, so not listed.
+# review (independent trader review, 2026-10-31): ok, confidence medium — Тезисы про объём как давление и подтверждение пробоев верны. Выходные и обед как время худших сетапов книга не разбирает (полдень по Нью-Йорку упомянут только как контрольная точка в технике пивотов). Оговорка корректна.
+
+[[questions]]
+id = "q46-app-long-probability"
+kind = "partial"
+question = "в блоке вероятности пишет «Long 70%». это значит, что 7 сделок из 10 будут в плюс? чем такая индикаторная вероятность отличается от реального win-rate?"
+relevant = [
+    { book = "murphy-ta", path = "16 Money Management and Trading Tactics › REWARD TO RISK RATIOS" },
+    { book = "murphy-ta", path = "C The Essentials of Building a Trading System › STEP 5: EVALUATE RESULTS" },
+]
+expected = """
+Из книги: даже лучшие фьючерсные трейдеры зарабатывают лишь примерно на 40% сделок — большинство сделок убыточны.
+Из книги: поэтому результат определяет не доля выигрышей, а то, что прибыльные сделки крупнее убыточных: цель сравнивают с риском, распространённый ориентир — не менее 3 к 1; «давать прибыли расти, а убытки резать».
+Из книги (приложение C): торговую систему оценивают по profit factor (валовая прибыль / валовой убыток), средней сделке (математическое ожидание) и максимальной просадке.
+Нет в книгах (честно сказать): как приложение считает «Long 70%» и что означает такая «индикаторная вероятность»; не выдумывать её трактовку и цифры win-rate.
+"""
+reviewed = true
+# source: backend/src/mastra/skills/analysisSkills.ts:713 — оговорка: probability — это не эмпирическая вероятность исхода
+# theme: статистика и win-rate
+# note: matches the task's own example of an app-internals question. Borderline partial: the book only says the best futures traders win ~40% of trades (16 › REWARD TO RISK RATIOS), but nothing on indicator probability vs win-rate.
+# review (independent trader review, 2026-10-31): fix, confidence medium — Тип unanswerable неверен: вторая часть вопроса — про реальный win-rate, и книга о нём говорит. Лучшие трейдеры выигрывают около 40% сделок, прибыльность обеспечивается соотношением прибыль/риск, систему оценивают по profit factor и матожиданию. Логику «Long 70%» книга не объясняет, так что правильный тип — partial.
+# review added: 16 Money Management and Trading Tactics › REWARD TO RISK RATIOS; C The Essentials of Building a Trading System › STEP 5: EVALUATE RESULTS
+
+[[questions]]
+id = "q47-btc-cycle-now"
+kind = "unanswerable"
+question = "где мы сейчас по циклу биткоина — сколько прошло после последнего халвинга, какая сейчас доминация BTC и что показывает MVRV?"
+relevant = []
+expected = """
+Честный отказ: в книге (1999) нет биткоина, халвингов, доминации BTC и MVRV, и нет текущих рыночных данных.
+Без выдуманных дат, процентов и значений индикаторов; можно лишь упомянуть, что в книге есть только общая теория временных циклов (глава 14).
+"""
+reviewed = true
+# source: backend/src/mastra/prompts/analysisPrompt.ts:273 — focus "cycle": крипто-циклы (халвинг, доминация, MVRV)
+# theme: крипто-рынок и циклы
+# note: every part asks for current crypto data; chapter 14 Time Cycles is generic and does not answer any part.
+# review (independent trader review, 2026-10-31): ok, confidence high — Биткоина, халвингов, доминации и MVRV в книге 1999 года нет, текущих данных тоже. Отказ корректен, отсылка к общей теории циклов (гл. 14) уместна.
+
+[[questions]]
+id = "q48-token-unlock"
+kind = "unanswerable"
+question = "how token unlock usually move the price? people dump before the unlock or after, and how many days this pressure last?"
+relevant = []
+expected = """
+Честный отказ: в книге нет разлоков токенов и статистики давления продаж до/после них.
+Без выдуманных сроков (дней) и процентов движения цены.
+"""
+reviewed = true
+# source: backend/src/mastra/prompts/scenarioPrompt.ts:469 — разлок токенов как известный по размеру поток предложения, растянутый на дни
+# theme: крипто-рынок и циклы
+# note: no supply-event / "sell the news" discussion found in the book (grep: rumor, overhang, dilution, unlock).
+# review (independent trader review, 2026-10-31): ok, confidence high — Разлоков токенов и статистики давления продаж по дням в книге нет. Отказ корректен.
+
+[[questions]]
+id = "q49-fakeout-depth"
+kind = "partial"
+question = "в пруфе написано fakeout: тень проколола уровень, а свеча закрылась обратно. насколько глубоким должен быть прокол (в ATR?), чтобы это считался ложный пробой, а не просто шум у уровня?"
+relevant = [
+    { book = "murphy-ta", path = "4 Basic Concepts of Trend › TRENDLINES › What Constitutes a Valid Breaking of a Trendline?" },
+    { book = "murphy-ta", path = "4 Basic Concepts of Trend › TRENDLINES › How to Handle Small Trendline Penetrations" },
+    { book = "murphy-ta", path = "4 Basic Concepts of Trend › SUPPORT AND RESISTANCE › Support Becoming Resistance and Vice Versa: Degree of Penetration" },
+    { book = "murphy-ta", path = "5 Major Reversal Patterns › VARIATIONS FROM THE IDEAL PATTERN › Filters" },
+]
+expected = """
+Из книги: закрытие за уровнем значимее внутридневного прокола; при проколе тенью и закрытии обратно жёсткого правила нет — незначительный прокол часто лучше игнорировать.
+Из книги: ценовой фильтр — прокол на закрытии на 3% (крупные уровни/линии) или ~1% (краткосрочные); временной фильтр — правило двух дней (два закрытия подряд за уровнем) или закрытие пятницы; объём на пробое подсказывает его надёжность.
+Из книги: компромисс фильтра — слишком маленький не отсекает whipsaw, слишком большой пропускает начало движения; что считать значимым проколом, каждый аналитик решает сам. Пробой вершины с последующим провалом — «бычья ловушка».
+Нет в книгах (честно сказать): порог прокола в ATR (например 0.3 ATR) — ATR в книге есть только в полосах STARC/Keltner, не как фильтр пробоя.
+"""
+reviewed = true
+# evidence: 4 Basic Concepts of Trend › TRENDLINES › What Constitutes a Valid Breaking of a Trendline? — "The 1-3% rule and the two day rule are also applied to the breaking of important support and resistance levels, not just to major trendlines."
+# evidence: 4 Basic Concepts of Trend › TRENDLINES › How to Handle Small Trendline Penetrations — "Sometimes it is best to ignore the minor breach, especially if subsequent market action proves that the original line is still valid."
+# evidence: 4 Basic Concepts of Trend › SUPPORT AND RESISTANCE › Support Becoming Resistance and Vice Versa: Degree of Penetration — "some chartists use a 3% penetration as a criteria, particularly for major support and resistance levels"
+# evidence: 5 Major Reversal Patterns › VARIATIONS FROM THE IDEAL PATTERN › Filters — "Most chartists require a close beyond a previous resistance peak instead of just an intraday penetration."
+# source: docs/PLAN.md:113 — NEXT-83: определение фейкаута — прокол уровня на 0.3 ATR и закрытие обратно
+# theme: пробои и ложные пробои
+# note: the 4 sections overlap (same 1-3% / two-day filters); the core is "What Constitutes a Valid Breaking". Degree of Penetration could be dropped if you want fewer.
+# review (independent trader review, 2026-10-31): ok, confidence high — Фильтры (закрытие, 1%/3%, правило двух дней, пятничное закрытие), правило «мелкий прокол можно игнорировать», компромисс размера фильтра и «бычья ловушка» подтверждаются текстом. Отказ про ATR проверен по книге: ATR есть только в STARC/Keltner.
+
+[[questions]]
+id = "q50-pdh-volume-climax"
+kind = "multi"
+question = "хай прошлого дня пробили на объёме раз в 7 выше среднего, а потом сразу слили обратно. это кульминация и снятие стопов, или такой пробой ещё можно покупать на повторном заходе?"
+relevant = [
+    { book = "murphy-ta", path = "4 Basic Concepts of Trend › REVERSAL DAYS" },
+    { book = "murphy-ta", path = "7 Volume and Open Interest › BLOWOFFS AND SELLING CLIMAXES" },
+    { book = "murphy-ta", path = "5 Major Reversal Patterns › VARIATIONS FROM THE IDEAL PATTERN › Filters" },
+    { book = "murphy-ta", path = "16 Money Management and Trading Tactics › TRADING TACTICS › Tactics on Breakouts: Anticipation or Reaction?" },
+    { book = "murphy-ta", path = "16 Money Management and Trading Tactics › THE USE OF INTRADAY PIVOT POINTS" },
+]
+expected = """
+Разворотный день на вершине: новый максимум, затем закрытие ниже закрытия предыдущего дня; чем шире диапазон и тяжелее объём, тем значимее сигнал возможного краткосрочного разворота (одно из названий — кульминация покупок, buying climax); сам по себе, без контекста других технических сигналов, он не очень важен.
+Blowoff на вершине: после долгого роста резкий рывок цены с большим скачком объёма и резкий пик.
+Пробой прежнего максимума, который не удержался, — ложный пробой, «бычья ловушка»; фильтры: закрытие за уровнем, а не внутридневной прокол, 1–3%, правило двух дней.
+Во внутридневной технике пивотов пробой хая прошлого дня — сигнал на покупку (buy stop над хаем, защитный стоп под минимумом текущего дня), но для подтверждения цена должна закрыться выше закрытия прошлого дня и открытия текущего. Покупка на откате после пробоя — разумный компромисс, если пробой состоялся и откат произошёл.
+Нет в книгах (честно сказать): понятия «снятие стопов» (stop hunt) и порога объёма «в 7 раз выше среднего».
+"""
+reviewed = true
+# evidence: 4 Basic Concepts of Trend › REVERSAL DAYS — "The wider the range for the day and the heavier the volume, the more significant is the signal for a possible near term trend reversal."
+# evidence: 7 Volume and Open Interest › BLOWOFFS AND SELLING CLIMAXES — "prices suddenly begin to rally sharply after a long advance, accompanied by a large jump in trading activity and then peak abruptly."
+# evidence: 5 Major Reversal Patterns › VARIATIONS FROM THE IDEAL PATTERN › Filters — "In such a case, the final upside breakout would become a “bull trap.”"
+# evidence: 16 Money Management and Trading Tactics › TRADING TACTICS › Tactics on Breakouts: Anticipation or Reaction? — "Waiting for the pullback after the breakout is a sensible compromise, providing the pullback occurs."
+# source: docs/PLAN.md:132 — ревью прогона SOL: провал пробоя PDH на объёме 6.9×, сценарии снова покупают пробой
+# theme: объём
+# note: could be "partial": the book has no "stop hunt" (снятие стопов) concept and no 7× volume threshold — a correct answer must not attribute those to the book. Kept "multi" because the main decision (climax/false breakout vs buying the pullback) is answered.
+# review (independent trader review, 2026-10-31): fix, confidence medium — Пропущен раздел о внутридневных пивотах: там Мёрфи прямо разбирает торговлю пробоя хая прошлого дня, где стоять стопу и какое закрытие нужно для подтверждения. Ещё не сказано честно, что понятия «снятие стопов» и порога «объём в 7 раз» в книге нет — иначе ответ рискует это выдумать.
+# review added: 16 Money Management and Trading Tactics › THE USE OF INTRADAY PIVOT POINTS
+
+[[questions]]
+id = "q51-rsi-divergence-age"
+kind = "partial"
+question = "дивергенцию RSI видно только когда сформировался второй пик, то есть она всегда опаздывает на несколько свечей. до какого возраста дивергенция ещё рабочая, а когда уже поздно входить?"
+relevant = [
+    { book = "murphy-ta", path = "10 Oscillators and Contrary Opinion › THE RELATIVE STRENGTH INDEX (RSI) › Interpreting RSI" },
+    { book = "murphy-ta", path = "10 Oscillators and Contrary Opinion › USING THE 70 AND 30 LINES TO GENERATE SIGNALS" },
+]
+expected = """
+Из книги: первый заход RSI в зону перекупленности/перепроданности — лишь предупреждение; если второй заход не подтверждает новый ценовой экстремум, это возможная дивергенция и повод для защитных действий.
+Из книги: дивергенция или failure swing подтверждается, когда RSI пробивает свой предыдущий минимум (на вершине) или максимум (на дне); многие также берут сигналом возврат RSI под 70 или над 30.
+Из книги: самые ценные дивергенции — при RSI выше 70 или ниже 30.
+Нет в книгах (честно сказать): «срок годности» дивергенции в барах и момент, когда входить уже поздно, — книга этого не даёт.
+"""
+reviewed = true
+# evidence: 10 Oscillators and Contrary Opinion › THE RELATIVE STRENGTH INDEX (RSI) › Interpreting RSI — "If the oscillator moves in the opposite direction, breaking a previous high or low, then a divergence or failure swing is confirmed."
+# evidence: 10 Oscillators and Contrary Opinion › USING THE 70 AND 30 LINES TO GENERATE SIGNALS — "A crossing back above the 30 line at that point is taken by many traders as a confirmation that the trend in the oscillator has turned up."
+# source: docs/PLAN.md:698 — DATA-19: дивергенции приходят 5–10 баров «старыми»
+# theme: дивергенции
+# review (independent trader review, 2026-10-31): ok, confidence high — Первый заход в зону — предупреждение, подтверждение пробоем предыдущего экстремума RSI, выход из-за 70/30, ценность дивергенций за 70/30 — всё есть в тексте. «Срока годности» дивергенции в барах в книге нет, оговорка корректна.
+
+[[questions]]
+id = "q52-engulfing-edge"
+kind = "partial"
+question = "does a bullish engulfing candle actually have any edge on BTC/ETH intraday or its basically a coin flip?"
+relevant = [
+    { book = "murphy-ta", path = "12 Japanese Candlesticks › CANDLE PATTERN ANALYSIS › Reversal Patterns" },
+    { book = "murphy-ta", path = "12 Japanese Candlesticks › FILTERED CANDLE PATTERNS" },
+    { book = "murphy-ta", path = "12 Japanese Candlesticks › CONCLUSION" },
+]
+expected = """
+Из книги: бычье поглощение (Engulfing Pattern, 2 свечи) есть только в списке бычьих разворотных моделей; подробно в тексте не разбирается.
+Из книги: разворотная модель имеет смысл только после предшествующего тренда (бычьего разворота в восходящем тренде не бывает); краткосрочный тренд можно определять скользящей ~10 периодов.
+Из книги: надёжность свечных моделей повышает фильтрация осциллятором — разворотные модели учитывают только когда %D (или RSI, CCI, %R) в зоне перекупленности/перепроданности; свечи используют вместе с другими индикаторами.
+Нет в книгах (честно сказать): статистика и бэктесты поглощения на BTC/ETH и на интрадей-графиках — есть ли edge, книга не говорит.
+"""
+reviewed = true
+# evidence: 12 Japanese Candlesticks › CANDLE PATTERN ANALYSIS › Reversal Patterns — "You cannot have a bullish reversal pattern in an uptrend."
+# evidence: 12 Japanese Candlesticks › FILTERED CANDLE PATTERNS — "If a candle pattern occurs when stochastics %D is at, say 65, the pattern is ignored."
+# evidence: 12 Japanese Candlesticks › CONCLUSION — "Engulfing Pattern (2)" (row of the CANDLE PATTERNS table under "Bullish Reversals" — the only mention of engulfing in the book)
+# source: docs/PLAN.md:729 — DEC-63: пилот-бэктест поглощения и фигур без преимущества
+# theme: свечные модели
+# note: CONCLUSION is listed only because its table is the single place the engulfing pattern is named; drop it if a bare list mention is not "substantive".
+# review (independent trader review, 2026-10-31): ok, confidence medium — Тезисы подтверждаются текстом: поглощение есть только в списке моделей, нужен предшествующий тренд, фильтрация осциллятором; статистики по BTC/ETH и интрадей в книге действительно нет. Тип partial верен.
+
+[[questions]]
+id = "q53-atr-vs-realized-vol"
+kind = "partial"
+question = "ATR и реализованная волатильность — это одно и то же или нет? что из них лучше брать, чтобы считать ширину стопа?"
+relevant = [
+    { book = "murphy-ta", path = "A Advanced Technical Indicators › STARC BANDS AND KELTNER CHANNELS" },
+    { book = "murphy-ta", path = "16 Money Management and Trading Tactics › MONEY MANAGEMENT › Using Protective Stops" },
+    { book = "murphy-ta", path = "9 Moving Averages › BOLLINGER BANDS" },
+    { book = "murphy-ta", path = "9 Moving Averages › BAND WIDTH MEASURES VOLATILITY" },
+    { book = "murphy-ta", path = "16 Money Management and Trading Tactics › COMBINING TECHNICAL FACTORS AND MONEY MANAGEMENT" },
+]
+expected = """
+Из книги: ATR — среднее истинных диапазонов за x периодов; true range — наибольшее из: high−low сегодня, вчерашнее закрытие−сегодняшний high, вчерашнее закрытие−сегодняшний low (на ATR построены полосы STARC и Keltner).
+Из книги: другая мера волатильности — стандартное отклонение (разброс цен вокруг средней) в полосах Боллинджера: полосы расширяются при росте волатильности за последние 20 дней и сужаются при её падении; полосы на ATR книга подаёт как альтернативу полосам на стандартном отклонении — это разные способы измерения.
+Из книги: стоп должен учитывать волатильность — чем волатильнее рынок, тем шире стоп; слишком близкий выбивает шумом, слишком далёкий даёт большие убытки; стоп ставят за валидный уровень поддержки/сопротивления, а размер позиции подбирают так, чтобы риск не превышал лимит money management (5% капитала на рынок).
+Нет в книгах (честно сказать): термина «реализованная волатильность» (Yang-Zhang и т.п.), прямого сравнения её с ATR и рекомендации, что из них брать для ширины стопа — ширину стопа книга не выводит ни из ATR, ни из стандартного отклонения.
+"""
+reviewed = true
+# evidence: A Advanced Technical Indicators › STARC BANDS AND KELTNER CHANNELS — "Average True Range is the average of true price ranges over x periods."
+# evidence: 16 Money Management and Trading Tactics › MONEY MANAGEMENT › Using Protective Stops — "The trader must consider the volatility of the market. The more volatile the market is, the looser the stop that must be employed."
+# source: docs/PLAN.md:1156 — идея заменить ATR% на realized-vol Yang-Zhang
+# theme: волатильность
+# note: the only standard-deviation volatility measure in the book is Bollinger Bands (9 › BOLLINGER BANDS / BAND WIDTH MEASURES VOLATILITY) — std dev of prices around a 20-day average, not realized vol of returns; not listed, add if you want it.
+# review (independent trader review, 2026-10-31): fix, confidence medium — В книге есть вторая мера волатильности — стандартное отклонение в полосах Боллинджера (ширина полос = волатильность за 20 дней), и полосы на ATR прямо названы альтернативой полосам на стандартном отклонении; ключ это пропускает и слишком широко пишет «сравнения нет». Также не взят раздел о том, как книга реально ставит стоп (за валидный уровень + лимит риска).
+# review added: 9 Moving Averages › BOLLINGER BANDS; 9 Moving Averages › BAND WIDTH MEASURES VOLATILITY; 16 Money Management and Trading Tactics › COMBINING TECHNICAL FACTORS AND MONEY MANAGEMENT
+
+[[questions]]
+id = "q54-breakeven-stop"
+kind = "multi"
+question = "после первого тейка стоп переносят в безубыток — это реально защищает прибыль или чаще просто выбивает по шуму прямо перед продолжением движения?"
+relevant = [
+    { book = "murphy-ta", path = "16 Money Management and Trading Tactics › SUMMARY OF MONEY MANAGEMENT AND TRADING GUIDELINES" },
+    { book = "murphy-ta", path = "16 Money Management and Trading Tactics › MONEY MANAGEMENT › Using Protective Stops" },
+    { book = "murphy-ta", path = "16 Money Management and Trading Tactics › TRADING MULTIPLE POSITIONS: TRENDING VERSUS TRADING UNITS" },
+    { book = "murphy-ta", path = "16 Money Management and Trading Tactics › COMBINING TECHNICAL FACTORS AND MONEY MANAGEMENT" },
+    { book = "murphy-ta", path = "16 Money Management and Trading Tactics › TYPES OF TRADING ORDERS" },
+    { book = "murphy-ta", path = "11 Point and Figure Charting › TRADING TACTICS › Adjusting Stops" },
+]
+expected = """
+Перенос стопа в безубыток в книге есть только как правило пирамидинга (при добавлении к выигрышной позиции) в сводке правил; про перенос после первого тейка отдельно не сказано.
+Компромисс: слишком близкий стоп выбивает на краткосрочных колебаниях («шум»), слишком далёкий даёт большие убытки; на волатильном рынке стоп свободнее; стоп для лонга должен стоять под валидным уровнем поддержки, а не только там, где удобно по деньгам.
+Прибыль книга защищает трейлинг-стопом: по мере движения стоп подтягивают (на P&F — под последнюю колонку o), это позволяет оставаться в позиции и защищать накопленную прибыль.
+Решение дилеммы «зафиксировать или пересидеть» — торговать несколькими единицами: «торговая» часть фиксирует прибыль у первой цели или защищается близким стопом, «трендовая» держится с широкими стопами; если тренд продолжился, закрытую часть можно восстановить.
+Статистики, как часто безубыточный стоп выбивает перед продолжением, в книге нет.
+"""
+reviewed = true
+# evidence: 16 Money Management and Trading Tactics › SUMMARY OF MONEY MANAGEMENT AND TRADING GUIDELINES — "Adjust protective stops to the breakeven point." (item 10d, under "When pyramiding (adding positions), follow these guidelines.")
+# evidence: 16 Money Management and Trading Tactics › MONEY MANAGEMENT › Using Protective Stops — "Protective stops placed too close, however, may result in unwanted liquidation on short term market swings (or “noise”)."
+# evidence: 16 Money Management and Trading Tactics › TRADING MULTIPLE POSITIONS: TRENDING VERSUS TRADING UNITS — "If the market reaches a first objective, is near resistance and overbought, some profits could be taken or a tight protective stop utilized."
+# source: docs/PLAN.md:871 — DEC-35: остаток лестничной сделки закрывается только стопом в безубытке
+# theme: стоп-лоссы
+# note: borderline partial — "чаще" asks for an empirical frequency the book does not give; the book does not say breakeven stops after a first take-profit work or fail, only the tight-vs-loose tradeoff and the multi-unit approach.
+# review (independent trader review, 2026-10-31): fix, confidence medium — Пропущен главный механизм книги для защиты прибыли — трейлинг-стоп (стоп подтягивают под последнюю коррекцию, P&F «Adjusting Stops», «Types of Trading Orders»), и требование ставить стоп за валидный уровень поддержки (Combining Technical Factors and Money Management) — именно это отвечает на «защищает или выбивает шумом».
+# review added: 16 Money Management and Trading Tactics › COMBINING TECHNICAL FACTORS AND MONEY MANAGEMENT; 16 Money Management and Trading Tactics › TYPES OF TRADING ORDERS; 11 Point and Figure Charting › TRADING TACTICS › Adjusting Stops
+
+[[questions]]
+id = "q55-kelly-negative-ev"
+kind = "partial"
+question = "если у сетапа матожидание около нуля или минусовое, критерий Келли просто говорит размер ноль? тогда такой сетап надо вообще пропускать или можно взять минимальным объёмом?"
+relevant = [
+    { book = "murphy-ta", path = "C The Essentials of Building a Trading System › STEP 5: EVALUATE RESULTS" },
+    { book = "murphy-ta", path = "16 Money Management and Trading Tactics › REWARD TO RISK RATIOS" },
+    { book = "murphy-ta", path = "C The Essentials of Building a Trading System › STEP 1: START WITH A CONCEPT (AN IDEA) › Principles of Good Concept Design" },
+    { book = "murphy-ta", path = "16 Money Management and Trading Tactics › MONEY MANAGEMENT › Some General Money Management Guidelines" },
+]
+expected = """
+Из книги: главное требование к концепции системы — она должна зарабатывать в долгосрочной перспективе, т.е. иметь положительное матожидание.
+Из книги: средняя сделка (avg trade) — это матожидание системы; она должна как минимум покрывать транзакционные издержки (проскальзывание и комиссии), иначе система теряет деньги.
+Из книги: для каждой сделки цель (reward) соотносят с возможным убытком (risk); распространённый ориентир — не менее 3 к 1, иначе сделку не рассматривают.
+Из книги: размер позиции задаётся простыми правилами money management (риск на один рынок — не более 5% капитала, под маржу на рынок — 10–15%); сложные статистические методы книга сознательно не разбирает.
+Нет в книгах (честно сказать): критерия Келли и ответа, пропускать ли сетап с нулевым/отрицательным матожиданием или брать его минимальным объёмом.
+"""
+reviewed = true
+# evidence: C The Essentials of Building a Trading System › STEP 5: EVALUATE RESULTS — "This is our system’s mathematical expectation. It should at least be high enough to cover transaction costs (slippage and commissions); otherwise we will be losing money."
+# evidence: 16 Money Management and Trading Tactics › REWARD TO RISK RATIOS — "The profit potential must be at least three times the possible loss if a trade is to be considered."
+# source: docs/PLAN.md:748 — DEC-5: политика при EV ≤ 0, Kelly обнуляет размер
+# theme: размер позиции
+# note: grep for Kelly / optimal f / expectancy found nothing else. Position-size rules (5% risk per market) are in 16 › MONEY MANAGEMENT › Some General Money Management Guidelines but do not address negative EV, so not listed.
+# review (independent trader review, 2026-10-31): fix, confidence high — Пропущена самая прямая фраза книги по вопросу: «concepts must make money in the long run (i.e. they must have a positive expectation)» (Appendix C, Principles of Good Concept Design). Для вопроса о размере позиции стоит указать и то, как книга вообще задаёт размер (лимиты 5% риска и 10–15% на рынок).
+# review added: C The Essentials of Building a Trading System › STEP 1: START WITH A CONCEPT (AN IDEA) › Principles of Good Concept Design; 16 Money Management and Trading Tactics › MONEY MANAGEMENT › Some General Money Management Guidelines
+
+[[questions]]
+id = "q56-perp-funding-cost"
+kind = "unanswerable"
+question = "сколько реально съедает фандинг, если держать лонг на перпе 12–18 часов при текущих ставках? его надо закладывать в R сделки или это копейки?"
+relevant = []
+expected = """
+Честный отказ: в книге нет фандинга бессрочных фьючерсов (перпов) и текущих ставок; без выдуманных цифр и долей R.
+Не путать с «Perpetual Contract™» из книги — это способ построения непрерывного ценового ряда фьючерсов, а не перп с фандингом.
+"""
+reviewed = true
+# source: docs/PLAN.md:738 — DEC-1: funding не включают в net R, замер — максимум 0.03R
+# theme: деривативы (funding, OI, ликвидации)
+# note: trap — "8 Long Term Charts › THE PERPETUAL CONTRACT™" is unrelated. Borderline partial only via the generic rule in C › STEP 5 (avg trade must cover transaction costs: slippage and commissions), but funding is never mentioned.
+# review (independent trader review, 2026-10-31): ok, confidence high — Фандинга перпов и текущих ставок в книге нет (grep funding/perp — только Perpetual Contract™ как способ построить непрерывный ряд, что верно оговорено). Честный отказ корректен.
+
+[[questions]]
+id = "q57-exchange-wick-stop"
+kind = "partial"
+question = "на одной бирже прошёл фитиль на 1.5%, а на остальных цена стояла на месте. считать, что мой стоп выбило, или это кривой принт? по какой бирже вообще правильно мерить стоп?"
+relevant = [
+    { book = "murphy-ta", path = "16 Money Management and Trading Tactics › TYPES OF TRADING ORDERS" },
+    { book = "murphy-ta", path = "4 Basic Concepts of Trend › TRENDLINES › What Constitutes a Valid Breaking of a Trendline?" },
+    { book = "murphy-ta", path = "4 Basic Concepts of Trend › TRENDLINES › How to Handle Small Trendline Penetrations" },
+    { book = "murphy-ta", path = "2 Dow Theory › THE USE OF CLOSING PRICES AND THE PRESENCE OF LINES" },
+]
+expected = """
+Из книги: стоп-ордер срабатывает, как только цена достигает стоп-цены, и становится рыночным; исполнение может оказаться хуже стоп-цены, особенно на быстром рынке.
+Из книги: при оценке пробоя уровня закрытие за ним значимее внутридневного прокола (Доу внутридневные проколы вообще не считал значимыми); чтобы отсеять ложные проколы, используют фильтры — ценовой (1–3% на закрытии) и временной (два закрытия подряд), их применяют и к уровням поддержки/сопротивления; небольшой прокол иногда лучше игнорировать.
+Нет в книгах (честно сказать): расхождения цен между биржами, ошибочные принты и выбор биржи, по которой мерить стоп, книга не разбирает; без выдуманных порогов.
+"""
+reviewed = true
+# source: CALIBRATION_RUNBOOK.md:50 — кросс-биржевой гейт целостности цены: 1.5% расхождение = подозрительный принт
+# theme: стакан и ликвидность
+# note: grep for erroneous / bad tick / print / exchange found nothing relevant; the only stop-order mechanics are in 16 › TYPES OF TRADING ORDERS (a stop becomes a market order once hit), which does not answer this.
+# review (independent trader review, 2026-10-31): fix, confidence medium — Вопрос не полностью вне книги: как относиться к внутридневному проколу уровня (закрытие важнее прокола, фильтры 1–3% и двух дней, Доу игнорировал внутридневные проколы) и как исполняется стоп-ордер — в книге есть. Нет только межбиржевой специфики и «кривых принтов», поэтому тип partial.
+# review added: 16 Money Management and Trading Tactics › TYPES OF TRADING ORDERS; 4 Basic Concepts of Trend › TRENDLINES › What Constitutes a Valid Breaking of a Trendline?; 4 Basic Concepts of Trend › TRENDLINES › How to Handle Small Trendline Penetrations; 2 Dow Theory › THE USE OF CLOSING PRICES AND THE PRESENCE OF LINES
+
+[[questions]]
+id = "q58-hit-rate-sample-size"
+kind = "partial"
+question = "в панели hit rate 100%, но сделка-то одна. сколько сделок надо, чтобы процент побед вообще что-то значил — 5, 30, 100?"
+relevant = [
+    { book = "murphy-ta", path = "C The Essentials of Building a Trading System › STEP 4: FORMALLY TEST IT WITH A COMPUTER" },
+    { book = "murphy-ta", path = "C The Essentials of Building a Trading System › STEP 5: EVALUATE RESULTS" },
+    { book = "murphy-ta", path = "16 Money Management and Trading Tactics › REWARD TO RISK RATIOS" },
+]
+expected = """
+Из книги: систему проверяют на разных наборах параметров, разных периодах и многих рынках — результат должен держаться на большинстве из них.
+Из книги: оценивают не процент побед, а profit factor (для долгосрочных — 2.00 и выше), среднюю сделку (матожидание) и максимальную просадку, разбирая сделку за сделкой.
+Из книги: даже лучшие фьючерсные трейдеры зарабатывают лишь на 40% сделок — прибыль даёт соотношение прибыли к риску, а не процент побед.
+Нет в книгах (честно сказать): минимальное число сделок для значимого hit rate (5, 30, 100) и статистическая значимость книгой не даются.
+"""
+reviewed = true
+# evidence: C The Essentials of Building a Trading System › STEP 4: FORMALLY TEST IT WITH A COMPUTER — "test that same system across my entire database of markets, expecting it to perform well in the majority of them."
+# evidence: C The Essentials of Building a Trading System › STEP 5: EVALUATE RESULTS — "Long term traders should aim for profit factors of 2.00 or higher."
+# evidence: 16 Money Management and Trading Tactics › REWARD TO RISK RATIOS — "The best futures traders make money on only 40% of their trades."
+# source: docs/PLAN.md:480 — NEXT-53: hit rate от одной сделки без порога 5 решающих исходов
+# theme: статистика и win-rate
+# note: borderline unanswerable — the actual number asked for is not in the book; the listed sections give only the related testing and evaluation guidance.
+# review (independent trader review, 2026-10-31): ok, confidence medium — Тезисы опираются на Appendix C (проверка на разных параметрах/периодах/рынках; profit factor, avg trade, просадка) и на 40% прибыльных сделок у лучших трейдеров; минимального числа сделок в книге действительно нет. Формулировка «не процент побед» — допустимый вывод из перечня ключевых статистик.
+
+[[questions]]
+id = "q59-macd-histogram-early"
+kind = "multi"
+question = "MACD вечно опаздывает: пока линии пересеклись, половина движения уже прошла. Гистограмма даёт сигнал раньше? Как ей правильно пользоваться?"
+relevant = [
+    { book = "murphy-ta", path = "10 Oscillators and Contrary Opinion › MACD HISTOGRAM" },
+    { book = "murphy-ta", path = "10 Oscillators and Contrary Opinion › COMBINE WEEKLIES AND DAILIES" },
+]
+expected = """
+Гистограмма MACD — столбики разницы между линией MACD и сигнальной линией; её пересечение нулевой линии совпадает с обычным сигналом пересечения линий MACD.
+Ценность гистограммы — видеть, расширяется или сужается спред: выше нуля, но падает к нулю — восходящий тренд слабеет; ниже нуля и растёт к нулю — нисходящий теряет импульс.
+Развороты гистограммы к нулевой линии всегда предшествуют фактическому пересечению — это раннее предупреждение, но сам сигнал на покупку/продажу даётся только при пересечении нуля.
+Правильное использование: развороты гистограммы — для раннего выхода из уже открытых позиций; открывать по ним новые позиции против преобладающего тренда гораздо опаснее.
+Недельные сигналы MACD важнее дневных: недельные задают направление, дневные — точку входа/выхода, и дневной сигнал берут только в сторону недельного; гистограмма хорошо работает на недельных графиках (в примере разворачивалась на 2–10 недель раньше сигнала пересечения).
+"""
+reviewed = true
+# evidence: 10 Oscillators and Contrary Opinion › MACD HISTOGRAM — "Turns in the histogram back toward the zero line always precede the actual crossover signals. Histogram turns are best used for spotting early exit signals from existing positions."
+# evidence: 10 Oscillators and Contrary Opinion › MACD HISTOGRAM — "It’s much more dangerous to use the histogram turns as an excuse to initiate new positions against the prevailing trend."
+# source: форумы трейдеров (BabyPips, Elite Trader, Quora): типичное недоумение, вопрос сформулирован ассистентом
+# theme: осцилляторы: MACD
+# note: supporting but not required: COMBINE WEEKLIES AND DAILIES (Fig 10.20b: weekly histogram turned 2-10 weeks before the crossover signals; weekly signals as a trend filter for MACD) and CONSTRUCTING AN OSCILLATOR USING TWO MOVING AVERAGES (Fig 10.6: "The histogram always turns well before the zero line crossover"). If added, kind -> multi. The book gives no "half the move" figure for MACD lag.
+# review (independent trader review, 2026-10-31): fix, confidence medium — На вопрос «как правильно пользоваться» в книге есть ещё раздел Combine Weeklies and Dailies: правило «недельные — направление, дневные — тайминг» сказано прямо про MACD, а рис. 10.20b — про гистограмму MACD на недельном графике. Раздел и тезис пропущены; тип становится multi.
+# review added: 10 Oscillators and Contrary Opinion › COMBINE WEEKLIES AND DAILIES
+
+[[questions]]
+id = "q60-stochastic-overbought-trend"
+kind = "multi"
+question = "Стохастик ушёл в перекупленность, я зашортил, а цена лезет выше и выше. Почему так и как пользоваться стохастиком, когда рынок в тренде?"
+relevant = [
+    { book = "murphy-ta", path = "10 Oscillators and Contrary Opinion › STOCHASTICS (K%D)" },
+    { book = "murphy-ta", path = "10 Oscillators and Contrary Opinion › THE RELATIVE STRENGTH INDEX (RSI) › Interpreting RSI" },
+    { book = "murphy-ta", path = "10 Oscillators and Contrary Opinion › THE IMPORTANCE OF TREND" },
+    { book = "murphy-ta", path = "10 Oscillators and Contrary Opinion › WHEN OSCILLATORS ARE MOST USEFUL" },
+]
+expected = """
+Любой сильный тренд быстро даёт экстремальное значение осциллятора; в сильном аптренде рынок может долго оставаться перекупленным, и сам выход в верхнюю зону — не повод закрывать лонг, а тем более шортить против тренда.
+В начале нового тренда после важного пробоя осцилляторы быстро уходят в экстремум и держатся там — тогда их лучше игнорировать и следовать тренду; больший вес им дают, когда тренд созревает.
+Осциллятор подчинён анализу тренда: покупать на перепроданности в аптренде, шортить на перекупленности только в даунтренде.
+Сигнал стохастика — не просто %D выше 80: нужна медвежья дивергенция (%D выше 80 делает две снижающиеся вершины при растущей цене), а сам сигнал — пересечение %D быстрой линией %K; недельные сигналы задают направление, дневные — тайминг.
+"""
+reviewed = true
+# evidence: 10 Oscillators and Contrary Opinion › STOCHASTICS (K%D) — "An alert or set-up is present when the %D line is in an extreme area and diverging from the price action."
+# evidence: 10 Oscillators and Contrary Opinion › THE RELATIVE STRENGTH INDEX (RSI) › Interpreting RSI — "Just because the oscillator has moved into the upper region is not reason enough to liquidate a long position (or, even worse, short into the strong uptrend)."
+# evidence: 10 Oscillators and Contrary Opinion › THE IMPORTANCE OF TREND — "Buy when the market is oversold in an uptrend. Sell short when the market is overbought in a downtrend."
+# evidence: 10 Oscillators and Contrary Opinion › WHEN OSCILLATORS ARE MOST USEFUL — "in the early stages of a new trend, following an important breakout, oscillators often reach extremes very quickly and stay there for awhile."
+# source: форумы трейдеров (BabyPips, Elite Trader, Quora): типичное недоумение, вопрос сформулирован ассистентом
+# theme: осцилляторы: стохастик
+# note: the key "overbought can stay overbought / don't short into a strong uptrend" passage sits in the RSI subsection but is stated for oscillators in general. COMBINE WEEKLIES AND DAILIES (weekly signals as trend filter, "especially true" for MACD and Stochastics) is a near-duplicate of the weekly/daily line inside STOCHASTICS, so not listed.
+# review (independent trader review, 2026-10-31): ok, confidence high — Все четыре тезиса подтверждаются текстом (Interpreting RSI, When Oscillators Are Most Useful, The Importance of Trend, Stochastics). Разделы выбраны верно, тип multi верен.
+
+[[questions]]
+id = "q61-gaps-fill"
+kind = "factual"
+question = "Говорят, гэпы всегда закрываются. Это правда? Какие гэпы обычно закрываются, а какие нет?"
+relevant = [
+    { book = "murphy-ta", path = "4 Basic Concepts of Trend › PRICE GAPS" },
+]
+expected = """
+Нет: «гэпы всегда закрываются» — миф; одни должны закрываться, другие нет, смысл зависит от типа гэпа и места в тренде.
+Гэп прорыва (breakaway) — на завершении важной фигуры, обычно на большом объёме; чаще всего не закрывается (может закрыться частично); чем больше объём после гэпа, тем меньше шанс закрытия.
+Гэп продолжения (runaway/measuring) — около середины движения, на умеренном объёме; служит поддержкой на коррекциях и тоже часто не закрывается.
+Гэп истощения (exhaustion) — в конце движения: рывок быстро гаснет, цены разворачиваются за несколько дней/неделю; закрытие ниже этого гэпа — медвежий сигнал (с гэпом вниз даёт «остров»).
+В аптренде закрытие ниже восходящего гэпа — всегда признак слабости.
+"""
+reviewed = true
+# evidence: 4 Basic Concepts of Trend › PRICE GAPS — "One of the maxims often heard is that “gaps are always filled.” This is simply not true. Some should be filled and others shouldn’t."
+# evidence: 4 Basic Concepts of Trend › PRICE GAPS — "More often than not, breakaway gaps are not filled." (subsection Three Types of Gaps, covered by the parent)
+# source: форумы трейдеров (BabyPips, Elite Trader, Quora): типичное недоумение, вопрос сформулирован ассистентом
+# theme: гэпы
+# note: parent chosen because the "myth" sentence is in the parent's own text and the per-type answer is in Three Types of Gaps / The Island Reversal. The book never says outright "exhaustion gaps get filled"; it says prices turn lower and close under the gap. 16 › TRADING TACTICS › Using Price Gaps (gaps as support for entries) does not address filling.
+# review (independent trader review, 2026-10-31): ok, confidence high — Тезисы точно передают раздел Price Gaps: миф про «всегда закрываются», breakaway и runaway часто не закрываются, закрытие ниже exhaustion-гэпа — сигнал вершины, закрытие ниже восходящего гэпа — слабость. Тип factual верен.
+
+[[questions]]
+id = "q62-bull-flag-duration-volume"
+kind = "multi"
+question = "Bull flag — how long can the consolidation last before it's no longer a flag, and what should volume do inside the flag?"
+relevant = [
+    { book = "murphy-ta", path = "6 Continuation Patterns › FLAGS AND PENNANTS" },
+    { book = "murphy-ta", path = "6 Continuation Patterns › THE DESCENDING TRIANGLE › The Time Factor in Triangles" },
+]
+expected = """
+Флаг — короткая пауза после резкого, почти вертикального движения («флагшток») на высоком объёме; параллелограмм с наклоном против тренда, обычно около середины движения.
+Длительность: флаги и вымпелы должны завершиться за одну–три недели; в нисходящих трендах ещё быстрее, часто не дольше одной–двух недель.
+Объём: во время формирования флага объём должен заметно иссякнуть (очень низкий); пробой верхней границы в аптренде — на возросшем объёме, всплеск активности.
+Граница по времени в книге: флаги и вымпелы — краткосрочные фигуры (1–3 недели), треугольник — промежуточная фигура (обычно от месяца до трёх), а «треугольник» короче месяца — скорее вымпел. Во что превращается именно флаг дольше трёх недель, книга отдельно не говорит — не выдумывать.
+"""
+reviewed = true
+# evidence: 6 Continuation Patterns › FLAGS AND PENNANTS — "Both patterns are relatively short term and should be completed within one to three weeks."
+# evidence: 6 Continuation Patterns › FLAGS AND PENNANTS — "An important requirement is that volume should dry up noticeably while each of the patterns is forming."
+# source: форумы трейдеров (BabyPips, Elite Trader, Quora): типичное недоумение, вопрос сформулирован ассистентом
+# theme: флаги и вымпелы
+# note: parent chosen because duration and volume appear in the parent's own text, Construction of Flags and Pennants, and Summary ("Prices then pause for about one to three weeks on very light volume."). Glossary "Flag: ... generally lasting less than three weeks". Kept factual: the 1-3 week rule answers "how long", though the book does not say what the pattern becomes if it runs longer.
+# review (independent trader review, 2026-10-31): fix, confidence medium — Тезис «правила нет» неполон: в разделе The Time Factor in Triangles книга разделяет фигуры по длительности (треугольник — 1–3 месяца, короче месяца — скорее вымпел). Это прямо относится к вопросу «сколько может длиться, пока это ещё флаг», раздел нужно добавить, тип — multi.
+# review added: 6 Continuation Patterns › THE DESCENDING TRIANGLE › The Time Factor in Triangles
+
+[[questions]]
+id = "q63-double-top-confirmation"
+kind = "multi"
+question = "Две вершины примерно на одном уровне — это уже двойная вершина или надо ждать пробоя минимума между ними? Как не зашортить раньше времени?"
+relevant = [
+    { book = "murphy-ta", path = "5 Major Reversal Patterns › DOUBLE TOPS AND BOTTOMS" },
+    { book = "murphy-ta", path = "5 Major Reversal Patterns › VARIATIONS FROM THE IDEAL PATTERN › The Term “Double Top” Greatly Overused" },
+    { book = "murphy-ta", path = "5 Major Reversal Patterns › VARIATIONS FROM THE IDEAL PATTERN › Time Between Peaks or Troughs Is Important" },
+    { book = "murphy-ta", path = "5 Major Reversal Patterns › VARIATIONS FROM THE IDEAL PATTERN" },
+    { book = "murphy-ta", path = "5 Major Reversal Patterns › VARIATIONS FROM THE IDEAL PATTERN › Filters" },
+]
+expected = """
+Две вершины — лишь «потенциальная» двойная вершина: разворот не завершён, пока промежуточный минимум между ними не пробит на закрытии; до этого это может быть боковая консолидация перед продолжением аптренда.
+Фигуру завершает решительное закрытие ниже промежуточного минимума на возросшем объёме (на второй вершине объём обычно меньше); возврат к уровню пробоя — обычное дело.
+Термин сильно злоупотребляют: откат от прежнего пика — нормальная реакция, большинство потенциальных двойных вершин оказываются чем-то другим; шансы обычно за продолжение тренда, поэтому разумно ждать завершения фигуры.
+Вершины не обязаны совпадать точно: вторая может не дотянуть до первой (не проблема) или чуть превысить её и всё равно оказаться частью вершины («ловушка быков»); ложные сигналы уменьшают фильтры — закрытие, а не внутридневной прокол, ценовой фильтр 1–3%, правило двух дней (не безошибочны).
+У большинства валидных двойных вершин между пиками не меньше месяца (иногда 2–3 месяца); чем больше время между пиками и высота фигуры, тем значимее разворот.
+"""
+reviewed = true
+# evidence: 5 Major Reversal Patterns › DOUBLE TOPS AND BOTTOMS — "the reversal is not complete until the previous support point at B is violated on a closing basis."
+# evidence: 5 Major Reversal Patterns › VARIATIONS FROM THE IDEAL PATTERN › The Term “Double Top” Greatly Overused — "Because the technical odds usually favor continuation of the present trend, it is usually wise to await completion of the pattern before taking action."
+# evidence: 5 Major Reversal Patterns › VARIATIONS FROM THE IDEAL PATTERN › Time Between Peaks or Troughs Is Important — "In general, most valid double tops or bottoms should have at least a month between the two peaks or troughs."
+# source: форумы трейдеров (BabyPips, Elite Trader, Quora): типичное недоумение, вопрос сформулирован ассистентом
+# theme: двойная вершина
+# note: could be collapsed to the parent VARIATIONS FROM THE IDEAL PATTERN, but its Filters subsection is about the second peak slightly exceeding the first (bull trap), which is only tangential; kept the two specific subsections instead.
+# review (independent trader review, 2026-10-31): fix, confidence medium — Пропущены вводный текст Variations from the Ideal Pattern (вершины «примерно на одном уровне»: вторая может не дойти или чуть превысить первую) и подраздел Filters (закрытие, 1–3%, правило двух дней против ложных сигналов). Оба прямо отвечают на «примерно на одном уровне» и «как не войти раньше времени».
+# review added: 5 Major Reversal Patterns › VARIATIONS FROM THE IDEAL PATTERN; 5 Major Reversal Patterns › VARIATIONS FROM THE IDEAL PATTERN › Filters
+
+[[questions]]
+id = "q64-dow-three-trends"
+kind = "multi"
+question = "Что такое основной, вторичный и малый тренд по теории Доу? Как понять, что откат — это вторичный тренд, а не разворот основного?"
+relevant = [
+    { book = "murphy-ta", path = "2 Dow Theory › BASIC TENETS › 2. The Market Has Three Trends." },
+    { book = "murphy-ta", path = "2 Dow Theory › BASIC TENETS › 6. A Trend Is Assumed to Be in Effect Until It Gives Definite Signals That It Has Reversed." },
+    { book = "murphy-ta", path = "4 Basic Concepts of Trend › PERCENTAGE RETRACEMENTS" },
+    { book = "murphy-ta", path = "4 Basic Concepts of Trend › TREND HAS THREE CLASSIFICATIONS" },
+]
+expected = """
+По Доу у тренда три части — основной (прилив, больше года, возможно несколько лет), вторичный/промежуточный (волны, от трёх недель до трёх месяцев) и малый (рябь, обычно меньше трёх недель); каждый тренд — часть следующего, большего.
+Вторичный тренд — коррекция основного: обычно откатывает от 1/3 до 2/3 предыдущего движения, чаще всего около 50%; во время такой коррекции основной тренд остаётся восходящим, хотя промежуточный и краткосрочный идут вниз.
+Отличить нормальную вторичную коррекцию от первой волны нового тренда — самая трудная задача; сигнал разворота — более низкие вершины и впадины: при «failure swing» (рост C не превысил пик A, затем пробит минимум B) сигнал однозначен, при «nonfailure swing» часть доутеоретиков ждёт ещё один более низкий максимум и минимум.
+Тренд считается действующим, пока не даст явных сигналов разворота; шансы обычно за продолжение тренда.
+Если коррекция уходит дальше 2/3 (66%) предыдущего движения, шансы уже за разворот тренда, а не просто откат.
+"""
+reviewed = true
+# evidence: 2 Dow Theory › BASIC TENETS › 2. The Market Has Three Trends. — "The secondary, or intermediate, trend represents corrections in the primary trend and usually lasts three weeks to three months."
+# evidence: 2 Dow Theory › BASIC TENETS › 6. A Trend Is Assumed to Be in Effect Until It Gives Definite Signals That It Has Reversed. — "being able to distinguish between a normal secondary correction in an existing trend and the first leg of a new trend in the opposite direction."
+# evidence: 4 Basic Concepts of Trend › PERCENTAGE RETRACEMENTS — "If prices move beyond the two-thirds point, the odds then favor a trend reversal rather than just a retracement."
+# source: форумы трейдеров (BabyPips, Elite Trader, Quora): типичное недоумение, вопрос сформулирован ассистентом
+# theme: теория Доу
+# note: PERCENTAGE RETRACEMENTS is in ch.4 but explicitly says the 33/50/66% parameters "are taken right from the original Dow Theory". Optional extras not listed: 4 › TREND HAS THREE CLASSIFICATIONS (restates the three trends; Murphy shortens major trend to >6 months for futures) and 2 › THE USE OF CLOSING PRICES AND THE PRESENCE OF LINES (Dow used closes only).
+# review (independent trader review, 2026-10-31): fix, confidence medium — Пропущен раздел Trend Has Three Classifications, где Мерфи разбирает классификацию Доу и показывает на примере (рис. 4.2a), что промежуточный тренд — коррекция основного: во время отката основной тренд всё ещё восходящий. Тезисы сжаты до 5 строк, факты прежние.
+# review added: 4 Basic Concepts of Trend › TREND HAS THREE CLASSIFICATIONS
+
+[[questions]]
+id = "q65-elliott-hard-rules"
+kind = "multi"
+question = "Волны Эллиотта каждый считает по-своему. Какие там жёсткие правила подсчёта, которые нельзя нарушать?"
+relevant = [
+    { book = "murphy-ta", path = "13 Elliott Wave Theory › BASIC TENETS OF THE ELLIOTT WAVE PRINCIPLE" },
+    { book = "murphy-ta", path = "13 Elliott Wave Theory › CORRECTIVE WAVES" },
+    { book = "murphy-ta", path = "13 Elliott Wave Theory › ELLIOTT WAVE APPLIED TO STOCKS VERSUS COMMODITIES" },
+    { book = "murphy-ta", path = "13 Elliott Wave Theory › SUMMARY AND CONCLUSIONS" },
+    { book = "murphy-ta", path = "13 Elliott Wave Theory › THE RULE OF ALTERNATION" },
+    { book = "murphy-ta", path = "13 Elliott Wave Theory › WAVE 4 AS A SUPPORT AREA" },
+]
+expected = """
+Основа счёта: пять волн по тренду (1, 3, 5 — импульсные, 2 и 4 — коррекционные) и три волны коррекции a-b-c; делится ли волна на пять или на три, определяет направление волны следующего, старшего уровня.
+Одно из важнейших правил: коррекция никогда не идёт пятью волнами (коррекции — «тройки», исключение — треугольники); пятиволновое движение против тренда — скорее первая волна более крупного движения.
+«Нерушимое» правило: волна 4 никогда не перекрывает волну 1 — в акциях; на товарных фьючерсах оно не так строго (возможны внутридневные проколы).
+Остальное книга подаёт как ориентиры, а не жёсткие правила: чередование говорит лишь, чего «вероятно» не будет; медвежий рынок «обычно» не уходит ниже предыдущей 4-й волны (исключения есть); растяжение одной импульсной волны, соотношения Фибоначчи; неясную картину нельзя насильно втискивать в счёт Эллиотта — использовать вместе с другими инструментами.
+Правил вроде «волна 3 не может быть самой короткой» в книге нет — не приписывать их книге.
+"""
+reviewed = true
+# evidence: 13 Elliott Wave Theory › BASIC TENETS OF THE ELLIOTT WAVE PRINCIPLE — "One of the most important rules to remember is that a correction can never take place in five waves."
+# evidence: 13 Elliott Wave Theory › CORRECTIVE WAVES — "Corrective waves are threes, never fives (with the exception of triangles)."
+# evidence: 13 Elliott Wave Theory › ELLIOTT WAVE APPLIED TO STOCKS VERSUS COMMODITIES — "The unbreakable rule that wave 4 can never overlap wave 1 in stocks is not as rigid in commodities."
+# evidence: 13 Elliott Wave Theory › SUMMARY AND CONCLUSIONS — "Trying to force unclear market action into an Elliott format, and ignoring other technical tools in the process, is a misuse of the theory."
+# source: форумы трейдеров (BabyPips, Elite Trader, Quora): типичное недоумение, вопрос сформулирован ассистентом
+# theme: волны Эллиотта
+# note: semantic search_candidates missed every Elliott section. The book states only two things as hard rules (corrections never in five; wave 4 never overlaps wave 1). The standard "wave 3 never the shortest" / "wave 2 never beyond start of wave 1" rules are absent from the book — the expected answer should not invent them. Borderline partial for that reason, but the book does answer the question as asked.
+# review (independent trader review, 2026-10-31): fix, confidence medium — Тезис «остальное — ориентиры» не подкреплён показанными разделами: это видно только в The Rule of Alternation («что вероятно не случится») и Wave 4 as a Support Area («guidelines», «there are exceptions to that rule»), их надо добавить. «Каналы» в тезисе не опираются ни на один взятый раздел — убраны.
+# review added: 13 Elliott Wave Theory › THE RULE OF ALTERNATION; 13 Elliott Wave Theory › WAVE 4 AS A SUPPORT AREA
+
+[[questions]]
+id = "q66-obv-divergence"
+kind = "factual"
+question = "OBV растёт, а цена стоит на месте или даже падает — что это значит? Как вообще читать OBV?"
+relevant = [
+    { book = "murphy-ta", path = "7 Volume and Open Interest › INTERPRETATION OF VOLUME FOR ALL MARKETS" },
+]
+expected = """
+OBV — накопительная линия: объём дня прибавляется, если день закрылся выше, и вычитается, если ниже; важно направление (тренд) линии, а не её абсолютные значения.
+В норме OBV идёт в ту же сторону, что и цена (в аптренде — более высокие пики и впадины); если линия объёма не идёт вслед за ценой, это дивергенция, предупреждающая о возможном развороте.
+«Объём опережает цену»: ослабление/усиление давления видно в объёме раньше, чем в цене; растущий OBV при стоящей или падающей цене — объём преобладает на росте, бычье расхождение (в книге пример, где OBV вёл цену вверх и заранее предупредил о бычьем пробое).
+Ограничения: весь дневной объём получает знак даже при минимальном изменении закрытия; на фьючерсах объём публикуется с опозданием на день, а «лимитные» дни искажают OBV.
+"""
+reviewed = true
+# evidence: 7 Volume and Open Interest › INTERPRETATION OF VOLUME FOR ALL MARKETS — "It’s when the volume line fails to move in the same direction as prices that a divergence exists and warns of a possible trend reversal." (subsection On Balance Volume)
+# evidence: 7 Volume and Open Interest › INTERPRETATION OF VOLUME FOR ALL MARKETS — "This chart of McDonalds shows the OBV line leading the price higher and warning in advance of the bullish breakout." (Figure 7.8 caption, sits in subsection Other Volume Limitations in Futures)
+# source: форумы трейдеров (BabyPips, Elite Trader, Quora): типичное недоумение, вопрос сформулирован ассистентом
+# theme: объём: OBV
+# note: parent chosen because the answer spans On Balance Volume, Volume Precedes Price, Alternatives to OBV and the Fig 7.8 caption in Other Volume Limitations in Futures. Narrower alternative: On Balance Volume + Volume Precedes Price (kind -> multi). The book never literally describes "OBV up while price falls"; the reading comes from the general divergence rule plus Fig 7.8.
+# review (independent trader review, 2026-10-31): ok, confidence high — Тезисы подтверждаются разделом Interpretation of Volume for All Markets: построение OBV, важно направление линии, дивергенция, «объём опережает цену», рис. 7.8 с OBV, ведущим цену вверх, ограничения OBV и фьючерсного объёма. Тип factual верен.
+
+[[questions]]
+id = "q67-doji-at-top"
+kind = "partial"
+question = "Doji right at the top of a rally — is that a reversal signal on its own or just indecision? Do I need to wait for the next candle?"
+relevant = [
+    { book = "murphy-ta", path = "12 Japanese Candlesticks › BASIC CANDLESTICKS" },
+    { book = "murphy-ta", path = "12 Japanese Candlesticks › CANDLE PATTERN ANALYSIS › Reversal Patterns" },
+    { book = "murphy-ta", path = "12 Japanese Candlesticks › FILTERED CANDLE PATTERNS" },
+    { book = "murphy-ta", path = "12 Japanese Candlesticks › CONCLUSION" },
+]
+expected = """
+Из книги: доджи — свеча с равными (почти равными) ценами открытия и закрытия; длинноногий доджи отражает значительную нерешительность, «надгробный» (gravestone, только длинная верхняя тень) — медвежий, и чем длиннее тень, тем медвежьее; «стрекоза» (dragonfly) — бычий.
+Из книги: разворотная модель имеет смысл только с учётом предшествующего тренда (медвежий разворот — только в аптренде); Evening Star — три дня: длинная белая свеча, «звезда» с маленьким телом и гэпом вверх, затем день с гэпом вниз и закрытием ниже середины тела первой свечи; в списке моделей есть Doji Star (2 свечи) и Evening Doji Star (3 свечи).
+Из книги: надёжность разворотных моделей повышает фильтрация — учитывать их только когда осциллятор (например, стохастик %D) в зоне перекупленности (выше 80).
+Нет в книгах (честно сказать): прямого ответа, является ли одиночный доджи на вершине самостоятельным сигналом разворота и обязательно ли ждать следующую свечу, в книге нет; статистики надёжности доджи тоже нет.
+"""
+reviewed = true
+# evidence: 12 Japanese Candlesticks › BASIC CANDLESTICKS — "The Long-legged Doji has long upper and lower shadows and reflects considerable indecision on the part of market participants."
+# evidence: 12 Japanese Candlesticks › CANDLE PATTERN ANALYSIS › Reversal Patterns — "opens with a gap below the body of the star and closes lower with the close price below the midpoint of the first day."
+# evidence: 12 Japanese Candlesticks › FILTERED CANDLE PATTERNS — "Candle patterns are considered only when %D is in its presignal area."
+# evidence: 12 Japanese Candlesticks › CONCLUSION — "The number in parentheses at the end of each name represents the number of candles that are used to define that particular pattern." (table rows: "Doji Star (2)", "Evening Doji Star (3)" under Bearish Reversals)
+# source: форумы трейдеров (BabyPips, Elite Trader, Quora): типичное недоумение, вопрос сформулирован ассистентом
+# theme: свечные модели: доджи
+# note: borderline multi vs partial. The book only implies "wait for confirmation" through the 3-day Evening Star and the 2/3-candle Doji Star patterns; it never states a rule for a lone doji. CONCLUSION is listed only for the pattern table (weakest of the four). Semantic search_candidates found only Reversal Patterns.
+# review (independent trader review, 2026-10-31): ok, confidence medium — Тезисы соответствуют тексту (виды доджи, нужен предшествующий тренд, Evening Star с подтверждающим третьим днём, фильтрация %D); прямого ответа «ждать ли следующую свечу» и статистики в книге нет, поэтому partial верен.
+
